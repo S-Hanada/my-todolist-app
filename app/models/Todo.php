@@ -36,10 +36,19 @@ class Todo {
 		//ログインユーザーを取得（暫定固定）
 		$user = "user001";
 		//sql文を定義
-		$sql = "SELECT title, status FROM todos WHERE user_id = '$user'";
+		$sql = "SELECT id, title, status FROM todos WHERE user_id = '$user'";
 		$todos = $dbh->query($sql);
 		return $todos;
 	}
 
+	//該当するtodoレコードを取得
+	public function findById($id) {
+		//DB接続
+		$dbh = self::DbConnect();
+		//引数で渡されたtodoのidから該当するtodoを取得
+		$sql = "SELECT title, comment, status, created_at, updated_at FROM todos WHERE id = '$id'";
+		$todo = $dbh->query($sql);
+		return $todo;
+	}
 }
 ?>

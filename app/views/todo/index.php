@@ -1,8 +1,8 @@
 <?php
 //コントローラーファイルを取得
-require_once('../../controllers/Todo.php');
+require_once('../../controllers/TodoController.php');
 //todoControllersクラスをインスタンス
-$todo_controllers = new TodoControllers();
+$todo_controllers = new TodoController();
 //DB接続
 $tasks = $todo_controllers->index();
 ?>
@@ -18,12 +18,14 @@ $tasks = $todo_controllers->index();
 <ul>
 <?php foreach ($tasks as $task) : ?>
 	<li>
-	<?php echo $task['title']; ?>
-	<?php if($task['status'] === '1') : ?>
-		完了
-	<?php else :?>
-		未完了
-	<?php endif; ?>
+		<a href="<?php echo sprintf('detatil.php?todo_id=%d', $task['id'])?>">
+		<?php echo $task['title']; ?>
+		<?php if($task['status'] === '1') : ?>
+			完了
+		<?php else :?>
+			未完了
+		<?php endif; ?>
+		</a>
 	</li>
 <?php endforeach; ?>
 </ul>
