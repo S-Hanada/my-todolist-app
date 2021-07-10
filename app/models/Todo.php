@@ -14,15 +14,11 @@ class Todo {
 		$dsn = sprintf('mysql:dbname=%s; host=%s; charset=%s', self::DBNAME, self::DBHOST, self::DBCHAR);
 		$user = self::DBUSER;
 		$passward = self::DBPASS;
-		$driver_options = array(
-			//SQLの実行エラーがあった時、例外をスロー
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-			//フェッチスタイルをカラム名をキーとして連想配列で取得するよう設定
-			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-		);
 
 		try {
-			$pdo = new PDO($dsn, $user, $passward, $driver_options);
+			$pdo = new PDO($dsn, $user, $passward);
+			//SQLの実行エラーがあった時、例外をスロー
+			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			return $pdo;
 		} catch (PDOException $e) {
 			return $e->getMessage();
@@ -37,18 +33,33 @@ class Todo {
 		$user = "user001";
 		//sql文を定義
 		$sql = "SELECT id, title, status FROM todos WHERE user_id = '$user'";
-		$todos = $dbh->query($sql);
+		$stmt = $dbh->query($sql);
+		//カラム名をキーとして連想配列で全て取得するよう設定
+		$todos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		return $todos;
 	}
 
 	//該当するtodoレコードを取得
-	public function findById($id) {
+	public static function findById($id) {
 		//DB接続
 		$dbh = self::DbConnect();
 		//引数で渡されたtodoのidから該当するtodoを取得
-		$sql = "SELECT title, comment, status, created_at, updated_at FROM todos WHERE id = '$id'";
-		$todo = $dbh->query($sql);
+		$sql = "SELECT user_id, title, comment, status, created_at, updated_at FROM todos WHERE id = '$id'";
+		$stmt = $dbh->query($sql);
+		//カラム名をキーとして連想配列で一つ取得するよう設定
+		$todo = $stmt->fetch(PDO::FETCH_ASSOC);
 		return $todo;
+	}
+
+	//todosテーブルに存在するidを取得
+	public static function findAllIds() {
+		//DB接続
+		$dbh = self::DbConnect();
+		//sql文を定義
+		$sql = "SELECT id FROM todos";
+		$stmt = $dbh->query($sql);
+		$todos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		return $todos;
 	}
 }
 ?>

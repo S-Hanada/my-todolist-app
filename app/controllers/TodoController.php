@@ -13,9 +13,18 @@ class TodoController {
 	public function detatil() {
 		//GETパラメーターからtodo_idを取得
 		$todo_id = $_GET['todo_id'];
+		//$todo_idがない場合は404.phpへ
+		if(!$this->isExisById($todo_id)) {
+			header('Location: 404.php');
+		}
 		//modelファイルのfindByIdメソッドから該当するtodoレコードを取得
 		$todo = Todo::findById($todo_id);
 		return $todo;
 	}
+
+	//idがあるかチェック。
+    public function isExisById($id) {
+    	return in_array($id, array_column(Todo::findAllIds(), 'id'));
+    }
 }
 ?>
