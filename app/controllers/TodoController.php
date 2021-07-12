@@ -1,6 +1,7 @@
 <?php
 //モデルファイルを取得
 require_once('../../models/Todo.php');
+
 //Todoリストに関するコントロール処理をまとめたクラス
 class TodoController {
 
@@ -13,16 +14,22 @@ class TodoController {
 	public function detatil() {
 		//GETパラメーターからtodo_idを取得
 		$todo_id = $_GET['todo_id'];
-		//$todo_idがない場合は404.phpへ
+		//$todo_idに値がない場合
+		if(!$todo_id) {
+			header('Location: ../error/404.php');
+			exit();
+		}
+		//$todo_idがtodosテーブルに存在しない場合は404.phpへ
 		if(!$this->isExisById($todo_id)) {
-			header('Location: 404.php');
+			header('Location: ../error/404.php');
+			exit();
 		}
 		//modelファイルのfindByIdメソッドから該当するtodoレコードを取得
 		$todo = Todo::findById($todo_id);
 		return $todo;
 	}
 
-	//idがあるかチェック。
+	//todosテーブルにidがあるかチェック。
     public function isExisById($id) {
     	return in_array($id, array_column(Todo::findAllIds(), 'id'));
     }
