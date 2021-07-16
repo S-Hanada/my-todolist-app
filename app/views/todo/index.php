@@ -1,6 +1,6 @@
 <?php
 //コントローラーファイルを取得
-require_once('../../controllers/TodoController.php');
+require_once(__DIR__.'/../../controllers/TodoController.php');
 //todoControllersクラスをインスタンス
 $todo_controllers = new TodoController();
 //DB接続
@@ -29,5 +29,8 @@ $tasks = $todo_controllers->index();
 	</li>
 <?php endforeach; ?>
 </ul>
+<div>
+	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todos/new.php">新規作成</a>
+</div>
 </body>
 </html>

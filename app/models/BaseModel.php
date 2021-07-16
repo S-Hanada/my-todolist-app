@@ -4,8 +4,8 @@ class BaseModel {
 
 	//DBに接続する
 	public function DbConnect() {
-		//configファイルを読み込み
-		$db = include('../../config/db.php');
+		//configのdbファイルを読み込み
+		$db = include(__DIR__.'/../config/db.php');
 		$dsn = sprintf('mysql:dbname=%s; host=%s; charset=%s', $db['DBNAME'], $db['DBHOST'], $db['DBCHAR']);
 		$user = $db['DBUSER'];
 		$passward = $db['DBPASS'];

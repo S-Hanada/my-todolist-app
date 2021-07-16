@@ -1,6 +1,6 @@
 <?php
 //DB接続用のクラスBaseModelを呼び出し
-require_once('BaseModel.php');
+require_once(__DIR__.'/BaseModel.php');
 
 class Todo extends BaseModel {
 
@@ -9,7 +9,7 @@ class Todo extends BaseModel {
 		//DB接続
 		$dbh = self::DbConnect();
 		//ログインユーザーを取得（暫定固定）
-		$user = "user002";
+		$user = "user001";
 		//sql文を定義
 		$sql = "SELECT id, title, status FROM todos WHERE user_id = '$user'";
 		$stmt = $dbh->query($sql);
@@ -39,6 +39,47 @@ class Todo extends BaseModel {
 		$stmt = $dbh->query($sql);
 		$todos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		return $todos;
+	}
+
+	//todosテーブルにidがあるかチェック。
+	public static function isExisById($id) {
+		return in_array($id, array_column(self::findAllIds(), 'id'));
+	}
+
+    //todosテーブルにレコードを挿入
+	public static function addNewRecord($user, $title, $comment = null) {
+		//DB接続
+		$dbh = self::DbConnect();
+		$sql = "INSERT INTO todos (user_id, title, comment) VALUES (:user, :title, :comment)";
+		$stmt = $dbh->prepare($sql);
+		$stmt->bindValue(':user', $user);
+		$stmt->bindValue(':title', $title);
+		$stmt->bindValue(':comment', $comment);
+		$stmt->execute();
+	}
+
+	//todosテーブルに存在するidを取得
+	public static function findAllUserIds() {
+		//DB接続
+		$dbh = self::DbConnect();
+		//sql文を定義
+		$sql = "SELECT id FROM users";
+		$stmt = $dbh->query($sql);
+		$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		return $users;
+	}
+
+	//usersテーブルに登録されたユーザーであるかチェック。
+	public static function isExisByUserId($id) {
+		return in_array($id, array_column(self::findAllUserIds(), 'id'));
+	}
+
+	//チェックした結果をcontrollerに返す
+	public static function userCheck($user) {
+		if(!self::isExisByUserId($user)) {
+			return false;
+		}
+		return true;
 	}
 }
 ?>
