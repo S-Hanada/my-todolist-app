@@ -30,7 +30,7 @@ $tasks = $todo_controllers->index();
 <?php endforeach; ?>
 </ul>
 <div>
-	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todos/new.php">新規作成</a>
+	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/new.php">新規作成</a>
 </div>
 </body>
 </html>

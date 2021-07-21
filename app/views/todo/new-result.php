@@ -4,7 +4,7 @@ require_once(__DIR__.'/../../controllers/TodoController.php');
 //todoControllersクラスをインスタンス
 $todo_controllers = new TodoController();
 //新規作成
-$todo_controllers->addNewTask();
+$todo_controllers->store();
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -16,6 +16,6 @@ $todo_controllers->addNewTask();
 <body>
 <h1>登録完了しました。</h1>
 <div>
-	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todos/new.php">新規作成ページに戻る</a>
+	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/new.php">新規作成ページに戻る</a>
 </div>
 </html>

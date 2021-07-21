@@ -58,28 +58,5 @@ class Todo extends BaseModel {
 		$stmt->execute();
 	}
 
-	//todosテーブルに存在するidを取得
-	public static function findAllUserIds() {
-		//DB接続
-		$dbh = self::DbConnect();
-		//sql文を定義
-		$sql = "SELECT id FROM users";
-		$stmt = $dbh->query($sql);
-		$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		return $users;
-	}
-
-	//usersテーブルに登録されたユーザーであるかチェック。
-	public static function isExisByUserId($id) {
-		return in_array($id, array_column(self::findAllUserIds(), 'id'));
-	}
-
-	//チェックした結果をcontrollerに返す
-	public static function userCheck($user) {
-		if(!self::isExisByUserId($user)) {
-			return false;
-		}
-		return true;
-	}
 }
 ?>

@@ -3,6 +3,8 @@
 require_once(__DIR__.'/../../controllers/TodoController.php');
 //todoControllersクラスをインスタンス
 $todo_controllers = new TodoController();
+//質問部分：エラーの配列が空になってしまっている
+var_dump($todo_controllers->getErrorMessage());
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -16,11 +18,16 @@ $todo_controllers = new TodoController();
 <form action="confirm.php" method="post">
 	<dl>
 		<dt><label>タイトル</label></dt>
-		<dd><input type="text" name="title"></dd>
+		<dd>
+			<input type="text" name="title" value="<?php echo htmlspecialchars($_POST['title'], ENT_QUOTES); ?>">
+			<!-- 質問部分：エラーがあればエラーを表示 -->
+		</dd>
 	</dl>
 	<dl>
 		<dt><label>詳細</label></dt>
-		<dd><input type="text" name="comment"></dd>
+		<dd><input type="text" name="comment" value="<?php echo htmlspecialchars($_POST['comment'], ENT_QUOTES); ?>">
+			<!-- 質問部分：エラーがあればエラーを表示 -->
+		</dd>
 	</dl>
 	<input type="submit" value="確認">
 </form>

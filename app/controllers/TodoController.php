@@ -1,9 +1,17 @@
 <?php
-//モデルファイルを取得
+//ベースのコントローラーファイルを取得
+require_once(__DIR__.'/BaseController.php');
+//todosテーブル用のモデルファイルを取得
 require_once(__DIR__.'/../models/Todo.php');
+//userテーブル用のモデルファイルを取得
+require_once(__DIR__.'/../models/User.php');
+//バリデーションを取得
+require_once(__DIR__.'/../Validations/TodoValidation.php');
 
 //Todoリストに関するコントロール処理をまとめたクラス
-class TodoController {
+class TodoController extends BaseController {
+
+	public $errors = [];
 
 	public function index() {
 		//modelファイルのfindAllメソッドからインデックスに表示する情報を取得
@@ -29,29 +37,33 @@ class TodoController {
 		return $todo;
 	}
 
-	public function addNewTask() {
+	public function store() {
 		//ユーザーを取得
-		$user = 'user001';
-		if(!Todo::userCheck($user)) {
-			echo '存在しないユーザーIDです';
+		$user = 'user003';
+		if(!User::isExisByUserId($user)) {
+			header('Location: ../error/errors.php');
 			exit();
 		}
 		//POSTパラメーターから新規作成フォームの内容を取得
 		$todo_title = $_POST['title'];
 		$todo_comment = $_POST['comment'];
+		//パラメーターのバリデーション
+		if(!TodoValidation::check($todo_title, $todo_comment)) {
+			$this->setErrorMessage(TodoValidation::getErrorMessage());
+			//リダイレクト先にPOSTデータを渡す307を指定
+			header('Location: ../todo/new.php', true, 307);
+			exit();
+		}
 		Todo::addNewRecord($user, $todo_title, $todo_comment);
 		return;
 	}
 
-	//URLがsshかを判定し、ドメインを繋げて出力
-	public function sshJudge() {
-		if (empty($_SERVER['HTTPS'])) {
-			$protocol = "http://";
-		} else {
-			$protocol = "https://";
-		}
-		$url = $protocol.$_SERVER['HTTP_HOST'];
-		return $url;
+	public function setErrorMessage($message) {
+		$this->errors = $message;
 	}
+
+	public function getErrorMessage() {
+		return $this->errors;
+	} 
 }
 ?>
