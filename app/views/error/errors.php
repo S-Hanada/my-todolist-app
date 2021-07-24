@@ -3,24 +3,23 @@
 require_once(__DIR__.'/../../controllers/TodoController.php');
 //todoControllersクラスをインスタンス
 $todo_controllers = new TodoController();
-//質問部分：エラーコメントの配列が空
-$errors = $todo_controllers->getErrorMessage();
-
+session_start();
+if($_SESSION['error']) {
+	$error = $_SESSION['error'];	
+	unset($_SESSION['error']);
+}
+session_destroy();
 ?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- エラーの内容によって文言を変更したい -->
-	<title>存在しないユーザーIDです</title>
+	<title><?php echo $error; ?></title>
 </head>
 <body>
-<!-- エラーの内容によって文言を変更したい -->
-<h1>存在しないユーザーIDです</h1>
+<h1><?php echo $error; ?></h1>
 <div>
 	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/">一覧ページに戻る</a>
 </div>
-</body>
-</body>
-</html>
+<?php require_once(__DIR__.'/../todo/footer.php'); ?>

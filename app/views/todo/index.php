@@ -32,5 +32,4 @@ $tasks = $todo_controllers->index();
 <div>
 	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/new.php">新規作成</a>
 </div>
-</body>
-</html>
+<?php require_once(__DIR__.'/footer.php'); ?>

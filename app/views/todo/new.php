@@ -3,8 +3,14 @@
 require_once(__DIR__.'/../../controllers/TodoController.php');
 //todoControllersクラスをインスタンス
 $todo_controllers = new TodoController();
-//質問部分：エラーの配列が空になってしまっている
-var_dump($todo_controllers->getErrorMessage());
+//エラ〜メッセージを取得
+session_start();
+if($_SESSION['errors']) {
+	$errors = [];
+	$errors = $_SESSION['errors'];	
+	unset($_SESSION['errors']);
+}
+session_destroy();
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -15,18 +21,30 @@ var_dump($todo_controllers->getErrorMessage());
 </head>
 <body>
 <h1>TODO新規作成ページ</h1>
-<form action="confirm.php" method="post">
+<form action="confirm.php" method="post" id="new-form">
 	<dl>
 		<dt><label>タイトル</label></dt>
 		<dd>
 			<input type="text" name="title" value="<?php echo htmlspecialchars($_POST['title'], ENT_QUOTES); ?>">
-			<!-- 質問部分：エラーがあればエラーを表示 -->
+			<?php if($errors['title']) : ?>
+				<ul>
+					<?php foreach($errors['title'] as $error) : ?>
+						<li><?php echo $error; ?></li>
+					<?php endforeach; ?>
+				</ul>
+			<?php endif; ?>
 		</dd>
 	</dl>
 	<dl>
 		<dt><label>詳細</label></dt>
 		<dd><input type="text" name="comment" value="<?php echo htmlspecialchars($_POST['comment'], ENT_QUOTES); ?>">
-			<!-- 質問部分：エラーがあればエラーを表示 -->
+		<?php if($errors['comment']) : ?>
+			<ul>
+				<?php foreach($errors['comment'] as $error) : ?>
+					<li><?php echo $error; ?></li>
+				<?php endforeach; ?>
+			</ul>
+		<?php endif; ?>
 		</dd>
 	</dl>
 	<input type="submit" value="確認">
@@ -34,5 +52,4 @@ var_dump($todo_controllers->getErrorMessage());
 <div>
 	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/">一覧ページに戻る</a>
 </div>
-</body>
-</html>
+<?php require_once(__DIR__.'/footer.php'); ?>

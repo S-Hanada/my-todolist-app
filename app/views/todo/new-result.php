@@ -18,4 +18,4 @@ $todo_controllers->store();
 <div>
 	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/new.php">新規作成ページに戻る</a>
 </div>
-</html>
+<?php require(__DIR__.'/footer.php'); ?>

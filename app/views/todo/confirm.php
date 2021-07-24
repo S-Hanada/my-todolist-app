@@ -7,7 +7,6 @@
 </head>
 <body>
 <h1>TODO新規作成 確認ページ</h1>
-<?php if($_POST['title']) : ?>
 <p>以下の内容を登録します。</p>
 <form action="new-result.php" method="post">
 	<dl>
@@ -22,10 +21,7 @@
 	<input type="hidden" name="comment" value="<?php echo htmlspecialchars($_POST['comment'], ENT_QUOTES); ?>">
 	<input type="submit" value="登録">
 </form>
-<?php else : ?>
-<p>タイトルが未記入です。</p>
-<?php endif; ?>
 <div>
 	<a href="javascript:history.back()">前に戻る</a>
 </div>
-</html>
+<?php require(__DIR__.'/footer.php'); ?>

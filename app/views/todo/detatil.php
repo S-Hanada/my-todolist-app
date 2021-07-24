@@ -27,5 +27,4 @@ $todo = $todo_controllers->detatil();
 <div>
 	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/">一覧ページに戻る</a>
 </div>
-</body>
-</html>
+<?php require(__DIR__.'/footer.php'); ?>

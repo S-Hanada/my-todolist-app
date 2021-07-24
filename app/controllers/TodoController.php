@@ -6,7 +6,7 @@ require_once(__DIR__.'/../models/Todo.php');
 //userテーブル用のモデルファイルを取得
 require_once(__DIR__.'/../models/User.php');
 //バリデーションを取得
-require_once(__DIR__.'/../Validations/TodoValidation.php');
+require_once(__DIR__.'/../validations/TodoValidation.php');
 
 //Todoリストに関するコントロール処理をまとめたクラス
 class TodoController extends BaseController {
@@ -41,6 +41,9 @@ class TodoController extends BaseController {
 		//ユーザーを取得
 		$user = 'user003';
 		if(!User::isExisByUserId($user)) {
+			session_start();
+			//エラーをセッションに格納
+			$_SESSION['error'] = "存在しないユーザーIDです";
 			header('Location: ../error/errors.php');
 			exit();
 		}
@@ -48,8 +51,11 @@ class TodoController extends BaseController {
 		$todo_title = $_POST['title'];
 		$todo_comment = $_POST['comment'];
 		//パラメーターのバリデーション
-		if(!TodoValidation::check($todo_title, $todo_comment)) {
-			$this->setErrorMessage(TodoValidation::getErrorMessage());
+		$todo_validation = new TodoValidation();
+		if(!$todo_validation->check($todo_title, $todo_comment)) {
+			session_start();
+			//エラーをセッションに格納
+			$_SESSION['errors'] = $todo_validation->getErrorMessage();
 			//リダイレクト先にPOSTデータを渡す307を指定
 			header('Location: ../todo/new.php', true, 307);
 			exit();
@@ -58,12 +64,5 @@ class TodoController extends BaseController {
 		return;
 	}
 
-	public function setErrorMessage($message) {
-		$this->errors = $message;
-	}
-
-	public function getErrorMessage() {
-		return $this->errors;
-	} 
 }
 ?>
