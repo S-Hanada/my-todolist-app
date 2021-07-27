@@ -47,16 +47,26 @@ class Todo extends BaseModel {
 	}
 
     //todosテーブルにレコードを挿入
-	public static function addNewRecord($user, $title, $comment = null) {
+	public static function save($user_id, $title, $comment = null) {
 		//DB接続
 		$dbh = self::DbConnect();
-		$sql = "INSERT INTO todos (user_id, title, comment) VALUES (:user, :title, :comment)";
-		$stmt = $dbh->prepare($sql);
-		$stmt->bindValue(':user', $user);
-		$stmt->bindValue(':title', $title);
-		$stmt->bindValue(':comment', $comment);
-		$stmt->execute();
+		try {
+			//トランザクション開始
+			$dbh->beginTransaction();
+		
+			$sql = "INSERT INTO todos (user_id, title, comment) VALUES (:user_id, :title, :comment)";
+			$stmt = $dbh->prepare($sql);
+			$stmt->bindValue(':user_id', $user_id);
+			$stmt->bindValue(':title', $title);
+			$stmt->bindValue(':comment', $comment);
+			$stmt->execute();
+			// トランザクション完了
+			return $dbh->commit();
+		} catch (PDOException $e) {
+			//トランザクション取り消し（ロールバック）
+			$dbh->rollBack();
+			return false;
+		}
 	}
-
 }
 ?>

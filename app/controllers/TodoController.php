@@ -48,8 +48,8 @@ class TodoController extends BaseController {
 			exit();
 		}
 		//POSTパラメーターから新規作成フォームの内容を取得
-		$todo_title = $_POST['title'];
-		$todo_comment = $_POST['comment'];
+		$title = $_POST['title'];
+		$comment = $_POST['comment'];
 		//パラメーターのバリデーション
 		$todo_validation = new TodoValidation();
 		if(!$todo_validation->check($todo_title, $todo_comment)) {
@@ -60,8 +60,14 @@ class TodoController extends BaseController {
 			header('Location: ../todo/new.php', true, 307);
 			exit();
 		}
-		Todo::addNewRecord($user, $todo_title, $todo_comment);
-		return;
+		if(!Todo::save($user, $title, $comment)) {
+			session_start();
+			//エラーをセッションに格納
+			$_SESSION['error'] = "登録に失敗しました";
+			//リダイレクト先にPOSTデータを渡す307を指定
+			header('Location: ../todo/new.php', true, 307);
+			exit();
+		}
 	}
 
 }

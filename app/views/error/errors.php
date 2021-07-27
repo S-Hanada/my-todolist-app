@@ -3,6 +3,7 @@
 require_once(__DIR__.'/../../controllers/TodoController.php');
 //todoControllersクラスをインスタンス
 $todo_controllers = new TodoController();
+//エラ〜メッセージを取得
 session_start();
 if($_SESSION['error']) {
 	$error = $_SESSION['error'];	

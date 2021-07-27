@@ -5,10 +5,16 @@ require_once(__DIR__.'/../../controllers/TodoController.php');
 $todo_controllers = new TodoController();
 //エラ〜メッセージを取得
 session_start();
+//フォームのエラ〜メッセージを取得
 if($_SESSION['errors']) {
 	$errors = [];
 	$errors = $_SESSION['errors'];	
 	unset($_SESSION['errors']);
+}
+//DB登録のエラーメッセージを取得
+if($_SESSION['error']) {
+	$dberror = $_SESSION['error'];
+	unset($_SESSION['error']);
 }
 session_destroy();
 ?>
@@ -21,6 +27,9 @@ session_destroy();
 </head>
 <body>
 <h1>TODO新規作成ページ</h1>
+<?php if($dberror) : ?>
+	<p style="color:red"><?php echo $dberror; ?><p>
+<?php endif; ?>
 <form action="confirm.php" method="post" id="new-form">
 	<dl>
 		<dt><label>タイトル</label></dt>
