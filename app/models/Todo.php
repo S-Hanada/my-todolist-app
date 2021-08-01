@@ -9,7 +9,7 @@ class Todo extends BaseModel {
 		//DB接続
 		$dbh = self::DbConnect();
 		//ログインユーザーを取得（暫定固定）
-		$user = "user001";
+		$user = "user002";
 		//sql文を定義
 		$sql = "SELECT id, title, status FROM todos WHERE user_id = '$user'";
 		$stmt = $dbh->query($sql);
@@ -67,6 +67,37 @@ class Todo extends BaseModel {
 			$dbh->rollBack();
 			return false;
 		}
+		//DB切断
+		$dbh = null;
+	}
+
+	//todosテーブルにレコードを挿入
+	public static function apply($id, $title, $comment = null, $status) {
+		//DB接続
+		$dbh = self::DbConnect();
+		try {
+			//トランザクション開始
+			$dbh->beginTransaction();
+		
+			$sql = "UPDATE todos SET title = :title, comment = :comment, status = :status WHERE id = :id";
+			$stmt = $dbh->prepare($sql);
+			// 更新する値と該当のIDを配列に格納する
+			$params = array(
+				':title' => $title,
+				':comment' => $comment,
+				':status' => $status,
+				':id' => $id
+			);
+			$stmt->execute($params);
+			// トランザクション完了
+			return $dbh->commit();
+		} catch (PDOException $e) {
+			//トランザクション取り消し（ロールバック）
+			$dbh->rollBack();
+			return false;
+		}
+		//DB切断
+		$dbh = null;
 	}
 }
 ?>

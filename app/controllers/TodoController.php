@@ -52,7 +52,7 @@ class TodoController extends BaseController {
 		$comment = $_POST['comment'];
 		//パラメーターのバリデーション
 		$todo_validation = new TodoValidation();
-		if(!$todo_validation->check($todo_title, $todo_comment)) {
+		if(!$todo_validation->check($title, $comment)) {
 			session_start();
 			//エラーをセッションに格納
 			$_SESSION['errors'] = $todo_validation->getErrorMessage();
@@ -69,6 +69,35 @@ class TodoController extends BaseController {
 			exit();
 		}
 	}
+
+	public function update() {
+		//GETパラメーターから編集する記事idを取得
+		$id = $_GET['todo_id'];
+		//POSTパラメーターから書き換えたフォームの内容を取得
+		$title = $_POST['title'];
+		$comment = $_POST['comment'];
+		if(isset($_POST['status'])) {
+			$status = $_POST['status'];
+		} else {
+			$status = "0";
+		}
+		//パラメーターのバリデーション
+		$todo_validation = new TodoValidation();
+		session_start();
+		if(!$todo_validation->check($title, $comment)) {
+			//エラーをセッションに格納
+			$_SESSION['errors'] = $todo_validation->getErrorMessage();
+			header('Location: ../todo/edit.php?todo_id='.$id, true, 307);
+			exit();
+		}
+		if(!Todo::apply($id, $title, $comment, $status)) {
+			//エラーをセッションに格納
+			$_SESSION['error'] = "編集に失敗しました";
+			header('Location: ../todo/edit.php?todo_id='.$id, true, 307);
+			exit();
+		}
+	}
+
 
 }
 ?>
