@@ -37,6 +37,24 @@ class TodoController extends BaseController {
 		return $todo;
 	}
 
+	public function edit() {
+		//GETパラメーターからtodo_idを取得
+		$todo_id = $_GET['todo_id'];
+		//$todo_idに値がない場合
+		if(!$todo_id) {
+			header('Location: ../error/404.php');
+			exit();
+		}
+		//$todo_idがtodosテーブルに存在しない場合は404.phpへ
+		if(!Todo::isExisById($todo_id)) {
+			header('Location: ../error/404.php');
+			exit();
+		}
+		//modelファイルのfindByIdメソッドから該当するtodoレコードを取得
+		$todo = Todo::findById($todo_id);
+		return $todo;
+	}
+
 	public function store() {
 		//ユーザーを取得
 		$user = 'user003';
@@ -57,7 +75,7 @@ class TodoController extends BaseController {
 			//エラーをセッションに格納
 			$_SESSION['errors'] = $todo_validation->getErrorMessage();
 			//リダイレクト先にPOSTデータを渡す307を指定
-			header('Location: ../todo/new.php', true, 307);
+			header('Location: ../todo/new.php?title='.$title.'&comment='.$comment);
 			exit();
 		}
 		if(!Todo::save($user, $title, $comment)) {
@@ -65,21 +83,21 @@ class TodoController extends BaseController {
 			//エラーをセッションに格納
 			$_SESSION['error'] = "登録に失敗しました";
 			//リダイレクト先にPOSTデータを渡す307を指定
-			header('Location: ../todo/new.php', true, 307);
+			header('Location: ../todo/new.php?title='.$title.'&comment='.$comment);
 			exit();
 		}
 	}
 
 	public function update() {
 		//GETパラメーターから編集する記事idを取得
-		$id = $_GET['todo_id'];
+		$id = $_POST['todo_id'];
 		//POSTパラメーターから書き換えたフォームの内容を取得
 		$title = $_POST['title'];
 		$comment = $_POST['comment'];
 		if(isset($_POST['status'])) {
 			$status = $_POST['status'];
 		} else {
-			$status = "0";
+			$status = STATUS_YET;
 		}
 		//パラメーターのバリデーション
 		$todo_validation = new TodoValidation();
@@ -87,13 +105,13 @@ class TodoController extends BaseController {
 		if(!$todo_validation->check($title, $comment)) {
 			//エラーをセッションに格納
 			$_SESSION['errors'] = $todo_validation->getErrorMessage();
-			header('Location: ../todo/edit.php?todo_id='.$id, true, 307);
+			header('Location: ../todo/edit.php?todo_id='.$id.'&title='.$title.'&comment='.$comment.'&status='.$status, true, 307);
 			exit();
 		}
-		if(!Todo::apply($id, $title, $comment, $status)) {
+		if(!Todo::update($id, $title, $comment, $status)) {
 			//エラーをセッションに格納
 			$_SESSION['error'] = "編集に失敗しました";
-			header('Location: ../todo/edit.php?todo_id='.$id, true, 307);
+			header('Location: ../todo/edit.php?todo_id='.$id.'&title='.$title.'&comment='.$comment.'&status='.$status, true, 307);
 			exit();
 		}
 	}

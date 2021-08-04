@@ -2,6 +2,10 @@
 //DB接続用のクラスBaseModelを呼び出し
 require_once(__DIR__.'/BaseModel.php');
 
+//statusカラムの値を定数で定義
+const STATUS_YET = 0;
+const STATUS_DONE = 1;
+
 class Todo extends BaseModel {
 
 	//レコードの取得
@@ -9,7 +13,7 @@ class Todo extends BaseModel {
 		//DB接続
 		$dbh = self::DbConnect();
 		//ログインユーザーを取得（暫定固定）
-		$user = "user002";
+		$user = "user003";
 		//sql文を定義
 		$sql = "SELECT id, title, status FROM todos WHERE user_id = '$user'";
 		$stmt = $dbh->query($sql);
@@ -23,7 +27,7 @@ class Todo extends BaseModel {
 		//DB接続
 		$dbh = self::DbConnect();
 		//引数で渡されたtodoのidから該当するtodoを取得
-		$sql = "SELECT user_id, title, comment, status, created_at, updated_at FROM todos WHERE id = '$id'";
+		$sql = "SELECT * FROM todos WHERE id = '$id'";
 		$stmt = $dbh->query($sql);
 		//カラム名をキーとして連想配列で一つ取得するよう設定
 		$todo = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -72,7 +76,7 @@ class Todo extends BaseModel {
 	}
 
 	//todosテーブルにレコードを挿入
-	public static function apply($id, $title, $comment = null, $status) {
+	public static function update($id, $title, $comment = null, $status) {
 		//DB接続
 		$dbh = self::DbConnect();
 		try {

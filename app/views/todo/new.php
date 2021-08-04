@@ -34,7 +34,7 @@ session_destroy();
 	<dl>
 		<dt><label>タイトル</label></dt>
 		<dd>
-			<input type="text" name="title" value="<?php echo htmlspecialchars($_POST['title'], ENT_QUOTES); ?>">
+			<input type="text" name="title" value="<?php echo htmlspecialchars($_GET['title'], ENT_QUOTES); ?>">
 			<?php if($errors['title']) : ?>
 				<ul>
 					<?php foreach($errors['title'] as $error) : ?>
@@ -46,7 +46,7 @@ session_destroy();
 	</dl>
 	<dl>
 		<dt><label>詳細</label></dt>
-		<dd><input type="text" name="comment" value="<?php echo htmlspecialchars($_POST['comment'], ENT_QUOTES); ?>">
+		<dd><input type="text" name="comment" value="<?php echo htmlspecialchars($_GET['comment'], ENT_QUOTES); ?>">
 		<?php if($errors['comment']) : ?>
 			<ul>
 				<?php foreach($errors['comment'] as $error) : ?>

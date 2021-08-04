@@ -16,6 +16,6 @@ $todo_controllers->update();
 <body>
 <h1>編集完了しました。</h1>
 <div>
-	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/edit.php?todo_id=<?php echo $_GET['todo_id']; ?>">編集ページに戻る</a>
+	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/edit.php?todo_id=<?php echo $_POST['todo_id']; ?>">編集ページに戻る</a>
 </div>
 <?php require(__DIR__.'/footer.php'); ?>
