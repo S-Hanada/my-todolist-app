@@ -2,11 +2,11 @@
 //DB接続用のクラスBaseModelを呼び出し
 require_once(__DIR__.'/BaseModel.php');
 
-//statusカラムの値を定数で定義
-const STATUS_YET = 0;
-const STATUS_DONE = 1;
-
 class Todo extends BaseModel {
+
+	//statusカラムの値を定数で定義
+	const STATUS_YET = "0";
+	const STATUS_DONE = "1";
 
 	//レコードの取得
 	public static function findAll() {
@@ -23,7 +23,7 @@ class Todo extends BaseModel {
 	}
 
 	//該当するtodoレコードを取得
-	public static function findById($id) {
+	public static function findByTodo($id) {
 		//DB接続
 		$dbh = self::DbConnect();
 		//引数で渡されたtodoのidから該当するtodoを取得
@@ -75,7 +75,7 @@ class Todo extends BaseModel {
 		$dbh = null;
 	}
 
-	//todosテーブルにレコードを挿入
+	//todosテーブルにレコードをアップデート
 	public static function update($id, $title, $comment = null, $status) {
 		//DB接続
 		$dbh = self::DbConnect();
@@ -103,5 +103,44 @@ class Todo extends BaseModel {
 		//DB切断
 		$dbh = null;
 	}
+
+	//該当するidのstatusをを取得
+	public static function findStatus($id) {
+		//DB接続
+		$dbh = self::DbConnect();
+		//引数で渡されたtodoのidから該当するtodoを取得
+		$sql = "SELECT status FROM todos WHERE id = '$id'";
+		$stmt = $dbh->query($sql);
+		//statusカラムを単一で取得
+		$todo = $stmt->fetchColumn();
+		return $todo;
+	}
+
+	//statusをajax通信でアップデート
+	public static function statusUpdate($id, $status) {
+		//DB接続
+		$dbh = self::DbConnect();
+		try {
+			//トランザクション開始
+			$dbh->beginTransaction();
+		
+			$sql = "UPDATE todos SET status = :status WHERE id = :id";
+			$stmt = $dbh->prepare($sql);
+			// 更新する値と該当のIDを配列に格納する
+			$params = array(
+				':status' => $status,
+				':id' => $id
+			);
+			$stmt->execute($params);
+			// トランザクション完了
+			return $dbh->commit();
+		} catch (PDOException $e) {
+			//トランザクション取り消し（ロールバック）
+			return $dbh->rollBack();
+		}
+		//DB切断
+		$dbh = null;
+	}
+
 }
 ?>

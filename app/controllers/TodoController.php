@@ -33,7 +33,7 @@ class TodoController extends BaseController {
 			exit();
 		}
 		//modelファイルのfindByIdメソッドから該当するtodoレコードを取得
-		$todo = Todo::findById($todo_id);
+		$todo = Todo::findByTodo($todo_id);
 		return $todo;
 	}
 
@@ -51,7 +51,7 @@ class TodoController extends BaseController {
 			exit();
 		}
 		//modelファイルのfindByIdメソッドから該当するtodoレコードを取得
-		$todo = Todo::findById($todo_id);
+		$todo = Todo::findByTodo($todo_id);
 		return $todo;
 	}
 
@@ -89,7 +89,7 @@ class TodoController extends BaseController {
 	}
 
 	public function update() {
-		//GETパラメーターから編集する記事idを取得
+		//POSTパラメーターから編集する記事idを取得
 		$id = $_POST['todo_id'];
 		//POSTパラメーターから書き換えたフォームの内容を取得
 		$title = $_POST['title'];
@@ -97,7 +97,7 @@ class TodoController extends BaseController {
 		if(isset($_POST['status'])) {
 			$status = $_POST['status'];
 		} else {
-			$status = STATUS_YET;
+			$status = TODO::STATUS_YET;
 		}
 		//パラメーターのバリデーション
 		$todo_validation = new TodoValidation();
@@ -116,6 +116,36 @@ class TodoController extends BaseController {
 		}
 	}
 
+
+	public function statusUpdate($id) {
+		//パラメーターのバリデーション
+		$todo_validation = new TodoValidation();
+		session_start();
+		if(!$todo_validation->checkId($id)) {
+			//エラーをセッションに格納
+			$_SESSION['errors'] = $todo_validation->getErrorMessage();
+			exit();
+		}
+		//idからDBのstatusの値を取得
+		$status = Todo::findStatus($id);
+		//DBに上書きするステータスを格納
+		if($status === TODO::STATUS_DONE) {
+			$status = TODO::STATUS_YET;
+		} else {
+			$status = TODO::STATUS_DONE;
+		}
+		if(!Todo::statusUpdate($id, $status)) {
+			//エラーをセッションに格納
+			$_SESSION['error'] = "編集に失敗しました";
+			exit();
+		}
+	}
+
+	//一覧ページのチェックボックスからアップデートした際に、その後のデータを取得
+	public function getAfterTodo($id) {
+		$todo = Todo::findByTodo($id);
+		return $todo;
+	}
 
 }
 ?>
