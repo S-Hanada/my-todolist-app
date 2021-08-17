@@ -15,7 +15,7 @@ $tasks = $todo_controllers->index();
 </head>
 <body>
 <h1>TODOリスト</h1>
-<!-- <div id="result">テキストボックスに値を入力して「送信」ボタンをクリックしてください</div> -->
+<div id="errormsg"></div>
 <ul>
 <?php foreach ($tasks as $task) : ?>
 	<li>

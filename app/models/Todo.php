@@ -133,13 +133,18 @@ class Todo extends BaseModel {
 			);
 			$stmt->execute($params);
 			// トランザクション完了
-			return $dbh->commit();
+			$dbh->commit();
+			//UPDATEでtrueを返すため、rowCountで直近のステートメントで作用した行数を取得
+			$count = $stmt->rowCount();
+			//行数があればtrueを返す
+			if($count) {
+				return true;
+			}
 		} catch (PDOException $e) {
 			//トランザクション取り消し（ロールバック）
-			return $dbh->rollBack();
+			$dbh->rollBack();
 		}
-		//DB切断
-		$dbh = null;
+		return false;
 	}
 
 }

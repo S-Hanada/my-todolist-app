@@ -27,16 +27,18 @@ $(function() {
       //jsonオブジェクトの値で条件分岐し、一覧のstatusのラベルを切り替え
       if(data.status === "1") {
         $(this).next($("#status")).text("完了");
-        $(this).next($("#status")).next($("#upresult")).text("success");
       } else {
         $(this).next($("#status")).text("未完了");
-        $(this).next($("#status")).next($("#upresult")).text("");
+      }
+      $(this).next($("#status")).next($("#upresult")).text(data.result);
+      if(data.msg) {
+        $("#errormsg").text(data.msg);
       }
     })
     // Ajaxリクエストが失敗した場合
-    .fail(function(XMLHttpRequest, textStatus, errorThrown) {
-      $(this).next($("#status")).text("リクエスト失敗");
-      $(this).next($("#status")).next($("#upresult")).text("fail");
+    .fail(function(XMLHttpRequest, textStatus, errorThrown){
+      $(this).next($("#status")).text("fail");
+      $("#errormsg").text("アップデートに失敗しました");
     });
   });
 });

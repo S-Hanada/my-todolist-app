@@ -118,34 +118,32 @@ class TodoController extends BaseController {
 
 
 	public function statusUpdate($id) {
+		$response = array();
+		$errormsg = "アップデートに失敗しました";
 		//パラメーターのバリデーション
 		$todo_validation = new TodoValidation();
-		session_start();
 		if(!$todo_validation->checkId($id)) {
-			//エラーをセッションに格納
-			$_SESSION['errors'] = $todo_validation->getErrorMessage();
-			exit();
+			$response['result'] = "fail";
+			$response['msg'] = $errormsg;
+			return $response;
 		}
 		//idからDBのstatusの値を取得
 		$status = Todo::findStatus($id);
 		//DBに上書きするステータスを格納
 		if($status === TODO::STATUS_DONE) {
 			$status = TODO::STATUS_YET;
+			$response['status'] = TODO::STATUS_YET;
 		} else {
 			$status = TODO::STATUS_DONE;
+			$response['status'] = TODO::STATUS_DONE;
 		}
 		if(!Todo::statusUpdate($id, $status)) {
-			//エラーをセッションに格納
-			$_SESSION['error'] = "編集に失敗しました";
-			exit();
+			$response['result'] = "fail";
+			$response['msg'] = $errormsg;
+			return $response;
 		}
+		$response['result'] = "success";
+		return $response;
 	}
-
-	//一覧ページのチェックボックスからアップデートした際に、その後のデータを取得
-	public function getAfterTodo($id) {
-		$todo = Todo::findByTodo($id);
-		return $todo;
-	}
-
 }
 ?>
