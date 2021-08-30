@@ -15,7 +15,7 @@ $tasks = $todo_controllers->index();
 </head>
 <body>
 <h1>TODOリスト</h1>
-<div id="errormsg"></div>
+<div id="resultmsg"></div>
 <ul>
 <?php foreach ($tasks as $task) : ?>
 	<li>
@@ -33,6 +33,7 @@ $tasks = $todo_controllers->index();
 		<a href="<?php echo sprintf('detatil.php?todo_id=%d', $task['id'])?>">
 		<?php echo $task['title']; ?>
 		</a>
+		<button type="button" class="deletebtn" value="<?php echo $task['id']; ?>" style="margin-left:20px">削除</button>
 	</li>
 <?php endforeach; ?>
 </ul>

@@ -145,5 +145,22 @@ class TodoController extends BaseController {
 		$response['result'] = "success";
 		return $response;
 	}
+
+	public function delete($id) {
+		$response = array();
+		$errormsg = "削除失敗しました";
+		//パラメーターのバリデーション
+		$todo_validation = new TodoValidation();
+		if(!$todo_validation->checkId($id)) {
+			$response['msg'] = $errormsg;
+			return $response;
+		}
+		if(!Todo::delete($id)) {
+			$response['msg'] = $errormsg;
+			return $response;
+		}
+		$response['msg'] = "タスクの削除が完了しました";
+		return $response;
+	}
 }
 ?>

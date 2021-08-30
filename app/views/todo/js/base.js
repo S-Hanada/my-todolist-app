@@ -17,7 +17,7 @@ $(function() {
     //contextでthisを指定する事で、コールバック部分でもthisの値を使用できるように
     $.ajax({
       type: "POST",
-      url: "application/json.php",
+      url: "api/statusup.php",
       data: { val: $(this).val() },
       dataType : "json",
       context : this
@@ -32,13 +32,39 @@ $(function() {
       }
       $(this).next($("#status")).next($("#upresult")).text(data.result);
       if(data.msg) {
-        $("#errormsg").text(data.msg);
+        $("#resultmsg").text(data.msg);
       }
     })
     // Ajaxリクエストが失敗した場合
     .fail(function(XMLHttpRequest, textStatus, errorThrown){
       $(this).next($("#status")).text("fail");
-      $("#errormsg").text("アップデートに失敗しました");
+      $("#resultmsg").text("アップデートに失敗しました");
+    });
+  });
+});
+
+// ajax delete
+$(function() {
+  $(".deletebtn").click(function(){
+    //contextでthisを指定する事で、コールバック部分でもthisの値を使用できるように
+    $.ajax({
+      type: "POST",
+      url: "api/delete.php",
+      data: { val: $(this).val() },
+      dataType : "json",
+      context : this
+    })
+    // Ajaxリクエストが成功した場
+    .done(function(data){
+      //削除ボタンの親要素を削除
+      $(this).parent().remove();
+      if(data.msg) {
+        $("#resultmsg").text(data.msg);
+      }
+    })
+    // Ajaxリクエストが失敗した場合
+    .fail(function(XMLHttpRequest, textStatus, errorThrown){
+      $("#resultmsg").text("削除に失敗しました");
     });
   });
 });

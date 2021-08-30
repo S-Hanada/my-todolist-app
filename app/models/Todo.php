@@ -147,5 +147,26 @@ class Todo extends BaseModel {
 		return false;
 	}
 
+	//statusをajax通信でアップデート
+	public static function delete($id) {
+		//DB接続
+		$dbh = self::DbConnect();
+		try {
+			//トランザクション開始
+			$dbh->beginTransaction();
+		
+			$sql = "DELETE FROM todos WHERE id = '$id'";
+			$stmt = $dbh->query($sql);
+			// トランザクション完了
+			return $dbh->commit();
+		} catch (PDOException $e) {
+			//トランザクション取り消し（ロールバック）
+			$dbh->rollBack();
+			return false;
+		}
+		//DB切断
+		$dbh = null;
+	}
+
 }
 ?>
