@@ -8,7 +8,7 @@
 <body>
 <h1>TODO新規作成 確認ページ</h1>
 <p>以下の内容を登録します。</p>
-<form action="new-result.php" method="post">
+<form action="new-do.php" method="post">
 	<dl>
 		<dt>タイトル</dt>
 		<dd><?php echo htmlspecialchars($_POST['title'], ENT_QUOTES); ?></dd>

@@ -15,17 +15,25 @@ $tasks = $todo_controllers->index();
 </head>
 <body>
 <h1>TODOリスト</h1>
+<div id="resultmsg"></div>
 <ul>
 <?php foreach ($tasks as $task) : ?>
 	<li>
+		<?php if($task['status'] === '1') : ?>
+			<input type="checkbox" name="status" value="<?php echo $task['id']; ?>" class="checkbtn" checked>
+		<?php else : ?>
+			<input type="checkbox" name="status" value="<?php echo $task['id']; ?>" class="checkbtn">
+		<?php endif; ?>
+		<?php if($task['status'] === '1') : ?>
+			<label id="status">完了</label>
+		<?php else : ?>
+			<label id="status">未完了</label>
+		<?php endif; ?>
+		<span id="upresult"></span>
 		<a href="<?php echo sprintf('detatil.php?todo_id=%d', $task['id'])?>">
 		<?php echo $task['title']; ?>
-		<?php if($task['status'] === '1') : ?>
-			完了
-		<?php else :?>
-			未完了
-		<?php endif; ?>
 		</a>
+		<button type="button" class="deletebtn" value="<?php echo $task['id']; ?>" style="margin-left:20px">削除</button>
 	</li>
 <?php endforeach; ?>
 </ul>

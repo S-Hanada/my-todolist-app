@@ -3,7 +3,7 @@
 require_once(__DIR__.'/../../controllers/TodoController.php');
 //todoControllersクラスをインスタンス
 $todo_controllers = new TodoController();
-//エラ〜メッセージを取得
+// //エラ〜メッセージを取得
 session_start();
 //フォームのエラ〜メッセージを取得
 if($_SESSION['errors']) {
@@ -17,6 +17,7 @@ if($_SESSION['error']) {
 	unset($_SESSION['error']);
 }
 session_destroy();
+$todo = $todo_controllers->edit();
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -26,15 +27,19 @@ session_destroy();
 	<title>TODOリスト</title>
 </head>
 <body>
-<h1>TODO新規作成ページ</h1>
+<h1>TODO編集ページ</h1>
 <?php if($dberror) : ?>
 	<p style="color:red"><?php echo $dberror; ?><p>
 <?php endif; ?>
-<form action="confirm.php" method="post" id="new-form">
+<form action="edit-do.php" method="post" id="update-form">
 	<dl>
 		<dt><label>タイトル</label></dt>
 		<dd>
-			<input type="text" name="title" value="<?php echo htmlspecialchars($_GET['title'], ENT_QUOTES); ?>">
+			<?php if($_GET['title']) : ?>
+				<input type="text" name="title" value="<?php echo htmlspecialchars($_GET['title'], ENT_QUOTES); ?>">
+			<?php else : ?>
+				<input type="text" name="title" value="<?php echo htmlspecialchars($todo['title'], ENT_QUOTES); ?>">
+			<?php endif; ?>
 			<?php if($errors['title']) : ?>
 				<ul>
 					<?php foreach($errors['title'] as $error) : ?>
@@ -46,7 +51,12 @@ session_destroy();
 	</dl>
 	<dl>
 		<dt><label>詳細</label></dt>
-		<dd><input type="text" name="comment" value="<?php echo htmlspecialchars($_GET['comment'], ENT_QUOTES); ?>">
+		<dd>
+			<?php if($_GET['comment']) : ?>
+				<input type="text" name="comment" value="<?php echo htmlspecialchars($_GET['comment'], ENT_QUOTES); ?>">
+			<?php else : ?>
+				<input type="text" name="comment" value="<?php echo htmlspecialchars($todo['comment'], ENT_QUOTES); ?>">
+			<?php endif; ?>
 		<?php if($errors['comment']) : ?>
 			<ul>
 				<?php foreach($errors['comment'] as $error) : ?>
@@ -56,7 +66,27 @@ session_destroy();
 		<?php endif; ?>
 		</dd>
 	</dl>
-	<input type="submit" value="確認">
+	<dl>
+		<dt><label>タスク状況</label></dt>
+		<dd>
+			<?php if($_GET['status']) : ?>
+				<?php if($_GET['status'] === '1') : ?>
+					<input type="checkbox" name="status" value="1" checked>
+				<?php else : ?>
+					<input type="checkbox" name="status" value="1">
+				<?php endif; ?>
+			<?php else : ?>
+				<?php if($todo['status'] === '1') : ?>
+					<input type="checkbox" name="status" value="1" checked>
+				<?php else : ?>
+					<input type="checkbox" name="status" value="1">
+				<?php endif; ?>
+			<?php endif; ?>
+			<span>完了<span>
+		</dd>
+	</dl>
+	<input type="hidden" name="todo_id" value="<?php echo htmlspecialchars($todo['id'], ENT_QUOTES); ?>">
+	<input type="submit" value="変更を保存">
 </form>
 <div>
 	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/">一覧ページに戻る</a>

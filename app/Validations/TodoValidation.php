@@ -36,6 +36,21 @@ class TodoValidation {
 		return true;
 	}
 
+	public function checkId($id) {
+		if(empty($id)) {
+			$errors['EmptyId'] = "Todoが取得できませんでした";
+		}
+		if(!Todo::isExisById($id)) {
+			$errors['NotExisById'] = "存在しないTodoです。";
+		}
+		//null以外であればプロパティに格納
+		if(isset($errors)) {
+			$this->errors = $errors;
+			return false;
+		}
+		return true;
+	}
+
 	public function getErrorMessage() {
 		return $this->errors;
 	}

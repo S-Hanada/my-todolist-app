@@ -25,6 +25,9 @@ $todo = $todo_controllers->detatil();
 	<p>未完了</p>
 <?php endif; ?>
 <div>
+	<a href="<?php echo sprintf('edit.php?todo_id=%d', $_GET['todo_id'])?>">編集する</a>
+</div>
+<div>
 	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/">一覧ページに戻る</a>
 </div>
 <?php require(__DIR__.'/footer.php'); ?>
