@@ -5,6 +5,7 @@ require_once(__DIR__.'/../../controllers/TodoController.php');
 $todo_controllers = new TodoController();
 //DB接続
 $tasks = $todo_controllers->index();
+var_dump($tasks);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -15,6 +16,17 @@ $tasks = $todo_controllers->index();
 </head>
 <body>
 <h1>TODOリスト</h1>
+<h2>タスクを検索する</h2>
+<form action="search-do.php" method="get" id="search">
+	<input type="text" name="keyword" value="">
+	<select name="status" form="search">
+		<option value="" selected>選択してください</option>
+		<option value="0">未完了</option>
+		<option value="1">完了</option>
+	</select>
+	<input type="submit" value="送信">
+</form>
+<h2>タスク一覧</h2>
 <div id="resultmsg"></div>
 <ul>
 <?php foreach ($tasks as $task) : ?>

@@ -116,51 +116,26 @@ class TodoController extends BaseController {
 		}
 	}
 
-
-	public function statusUpdate($id) {
-		$response = array();
-		$errormsg = "アップデートに失敗しました";
-		//パラメーターのバリデーション
-		$todo_validation = new TodoValidation();
-		if(!$todo_validation->checkId($id)) {
-			$response['result'] = "fail";
-			$response['msg'] = $errormsg;
-			return $response;
+	public function search() {
+		//ユーザーを取得
+		$user = 'user003';
+		//GETパラメーターからキーワードを取得
+		if($_GET['keyword']) {
+			$keyword = $_GET['keyword'];
 		}
-		//idからDBのstatusの値を取得
-		$status = Todo::findStatus($id);
-		//DBに上書きするステータスを格納
-		if($status === TODO::STATUS_DONE) {
-			$status = TODO::STATUS_YET;
-			$response['status'] = TODO::STATUS_YET;
-		} else {
-			$status = TODO::STATUS_DONE;
-			$response['status'] = TODO::STATUS_DONE;
+		//GETパラメーターからステータスを取得
+		//ドロップリストでvalueが空だった場合の分岐
+		if($_GET['status'] !== "") {
+			$status = $_GET['status'];
 		}
-		if(!Todo::statusUpdate($id, $status)) {
-			$response['result'] = "fail";
-			$response['msg'] = $errormsg;
-			return $response;
+		//入力した値に該当するtodoを検索
+		$todos = Todo::search($user, $keyword, $status);
+		if(empty($todos)) {
+			session_start();
+			//エラーをセッションに格納
+			$_SESSION['NoneTask'] = "該当するタスクが見つかりませんでした";
 		}
-		$response['result'] = "success";
-		return $response;
-	}
-
-	public function delete($id) {
-		$response = array();
-		$errormsg = "削除失敗しました";
-		//パラメーターのバリデーション
-		$todo_validation = new TodoValidation();
-		if(!$todo_validation->checkId($id)) {
-			$response['msg'] = $errormsg;
-			return $response;
-		}
-		if(!Todo::delete($id)) {
-			$response['msg'] = $errormsg;
-			return $response;
-		}
-		$response['msg'] = "タスクの削除が完了しました";
-		return $response;
+		return $todos;
 	}
 }
 ?>

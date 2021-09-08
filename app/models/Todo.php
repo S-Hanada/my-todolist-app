@@ -168,5 +168,32 @@ class Todo extends BaseModel {
 		$dbh = null;
 	}
 
+	//該当する記事を取得
+	public static function search($user_id, $keyword = null, $status = null) {
+		//DB接続
+		$dbh = self::DbConnect();
+		try {
+			//トランザクション開始
+			$dbh->beginTransaction();
+			//引数で渡されたtodoのidから該当するtodoを取得
+			if($status === null) {
+				$sql = "SELECT * FROM todos WHERE user_id = '$user_id' AND title like '%".$keyword."%'";
+			} elseif($keyword === null) {
+				$sql = "SELECT * FROM todos WHERE user_id = '$user_id' AND status = '$status'";
+			} else {
+				$sql = "SELECT * FROM todos WHERE user_id = '$user_id' AND status = '$status' AND title like '%".$keyword."%'";
+			}
+			$stmt = $dbh->query($sql);
+			$stmt->execute();
+			// トランザクション完了
+			$dbh->commit();
+			$todos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			return $todos;
+		} catch (PDOException $e) {
+			//トランザクション取り消し（ロールバック）
+			$dbh->rollBack();
+			return false;
+		}
+	}
 }
 ?>
