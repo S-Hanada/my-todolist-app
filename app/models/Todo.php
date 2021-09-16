@@ -169,14 +169,14 @@ class Todo extends BaseModel {
 	}
 
 	//該当する記事を取得
-	public static function search($user_id, $keyword = null, $status = null) {
+	public static function findByQuery($user_id, $keyword = null, $status) {
 		//DB接続
 		$dbh = self::DbConnect();
 		try {
 			//トランザクション開始
 			$dbh->beginTransaction();
 			//引数で渡されたtodoのidから該当するtodoを取得
-			if($status === null) {
+			if($status === "none") {
 				$sql = "SELECT * FROM todos WHERE user_id = '$user_id' AND title like '%".$keyword."%'";
 			} elseif($keyword === null) {
 				$sql = "SELECT * FROM todos WHERE user_id = '$user_id' AND status = '$status'";

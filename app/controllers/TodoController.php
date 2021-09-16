@@ -14,8 +14,23 @@ class TodoController extends BaseController {
 	public $errors = [];
 
 	public function index() {
-		//modelファイルのfindAllメソッドからインデックスに表示する情報を取得
-		$todos = Todo::findAll();
+		//ユーザーを取得
+		$user = 'user003';
+		//GETパラメーターから値を取得
+		$keyword = $_GET['keyword'];
+		$status = $_GET['status'];
+		if(!$keyword && $status === "none") {
+			//modelファイルのfindAllメソッドからインデックスに表示する情報を取得
+			$todos = Todo::findAll();
+			return $todos;
+		}
+		//入力した値に該当するtodoを検索
+		$todos = Todo::findByQuery($user, $keyword, $status);
+		if(empty($todos)) {
+			session_start();
+			//エラーをセッションに格納
+			$_SESSION['NoneTask'] = "該当するタスクが見つかりませんでした";
+		}
 		return $todos;
 	}
 
@@ -114,28 +129,6 @@ class TodoController extends BaseController {
 			header('Location: ../todo/edit.php?todo_id='.$id.'&title='.$title.'&comment='.$comment.'&status='.$status, true, 307);
 			exit();
 		}
-	}
-
-	public function search() {
-		//ユーザーを取得
-		$user = 'user003';
-		//GETパラメーターからキーワードを取得
-		if($_GET['keyword']) {
-			$keyword = $_GET['keyword'];
-		}
-		//GETパラメーターからステータスを取得
-		//ドロップリストでvalueが空だった場合の分岐
-		if($_GET['status'] !== "") {
-			$status = $_GET['status'];
-		}
-		//入力した値に該当するtodoを検索
-		$todos = Todo::search($user, $keyword, $status);
-		if(empty($todos)) {
-			session_start();
-			//エラーをセッションに格納
-			$_SESSION['NoneTask'] = "該当するタスクが見つかりませんでした";
-		}
-		return $todos;
 	}
 }
 ?>
