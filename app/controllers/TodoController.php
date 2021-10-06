@@ -17,19 +17,21 @@ class TodoController extends BaseController {
 		//ユーザーを取得
 		$user = 'user003';
 		//GETパラメーターから値を取得
-		$keyword = $_GET['keyword'];
+		// if(empty($_GET['title'])) {
+		$title = $_GET['title'];
 		$status = $_GET['status'];
-		if(!$keyword && $status === "none") {
+		if(!$title && $status === "none") {
 			//modelファイルのfindAllメソッドからインデックスに表示する情報を取得
 			$todos = Todo::findAll();
 			return $todos;
 		}
 		//入力した値に該当するtodoを検索
-		$todos = Todo::findByQuery($user, $keyword, $status);
-		if(empty($todos)) {
+		$todos = Todo::findByQuery($user, $title, $status);
+		if(!$todos) {
 			session_start();
 			//エラーをセッションに格納
 			$_SESSION['NoneTask'] = "該当するタスクが見つかりませんでした";
+			return $todos;
 		}
 		return $todos;
 	}

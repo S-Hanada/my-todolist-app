@@ -26,7 +26,7 @@ session_destroy();
 <h1>TODOリスト</h1>
 <h2>タスクを検索する</h2>
 <form action="index.php" method="get" id="search">
-	<input type="text" name="keyword" value="<?php echo $_GET["keyword"]; ?>">
+	<input type="text" name="title" value="<?php echo $_GET["title"]; ?>">
 	<select name="status" form="search">
 		<option value="none" selected>選択してください</option>
 		<option value="0">未完了</option>

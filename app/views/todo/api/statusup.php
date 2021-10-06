@@ -1,6 +1,6 @@
 <?php
 //ステータス更新処理
-//コントローラーファイルを取得
+//APIyou コントローラーファイルを取得
 require_once(__DIR__.'/../../../controllers/api/ApiController.php');
 //ApiControllerクラスをインスタンス
 $todo_controllers = new ApiController();
