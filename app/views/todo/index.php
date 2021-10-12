@@ -13,7 +13,7 @@ if($_SESSION['NoneTask']) {
 	unset($_SESSION['NoneTask']);
 }
 session_destroy();
-// var_dump($tasks);
+var_dump($tasks);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -29,8 +29,8 @@ session_destroy();
 	<input type="text" name="title" value="<?php echo $_GET["title"]; ?>">
 	<select name="status" form="search">
 		<option value="none" selected>選択してください</option>
-		<option value="0">未完了</option>
-		<option value="1">完了</option>
+		<option value="yet">未完了</option>
+		<option value="done">完了</option>
 	</select>
 	<input type="submit" value="送信">
 </form>
@@ -42,12 +42,12 @@ session_destroy();
 	<ul>
 	<?php foreach ($tasks as $task) : ?>
 		<li>
-			<?php if($task['status'] === '1') : ?>
+			<?php if($task['status'] === 'done') : ?>
 				<input type="checkbox" name="status" value="<?php echo $task['id']; ?>" class="checkbtn" checked>
 			<?php else : ?>
 				<input type="checkbox" name="status" value="<?php echo $task['id']; ?>" class="checkbtn">
 			<?php endif; ?>
-			<?php if($task['status'] === '1') : ?>
+			<?php if($task['status'] === 'done') : ?>
 				<label id="status">完了</label>
 			<?php else : ?>
 				<label id="status">未完了</label>

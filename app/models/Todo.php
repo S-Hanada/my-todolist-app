@@ -169,26 +169,14 @@ class Todo extends BaseModel {
 	}
 
 	//該当する記事を取得
-	public static function findByQuery($user_id, $title = null, $status) {
+	public static function findByQuery($sql, $bind_values = []) {
 		//DB接続
 		$dbh = self::DbConnect();
 		try {
 			//トランザクション開始
 			$dbh->beginTransaction();
-			//引数で渡されたtodoのidから該当するtodoを取得
-			$params = [];
-			$params['user'] = $user_id;
-			$params['title'] = $title;
-			$params['status'] = $status;
-			// return $params;
-			$sql = self::buildQuery($params);
 			$stmt = $dbh->prepare($sql);
-			$stmt->bindValue(':user', $params['user']);
-			$stmt->bindValue(':title', "%".$params['title']."%");
-			if($params['status'] !== "none") {
-				$stmt->bindValue(':status', $params['status']);
-			}
-			$stmt->execute();
+			$stmt->execute($bind_values);
 			// // トランザクション完了
 			$dbh->commit();
 			$todos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -198,23 +186,6 @@ class Todo extends BaseModel {
 			$dbh->rollBack();
 			return false;
 		}
-	}
-
-	//findByQueryのwhere句を生成
-	private function buildQuery($params) {
-	    $query = "SELECT * FROM todos WHERE user_id = :user";
-
-	    foreach ($params as $key => $param) {
-	    	if ($key === "title") {
-	    		$query = $query . " AND title like :title";
-	    	}
-		    if ($key === "status") {
-		    	if($param !== "none") {
-		    		$query = $query . " AND status = :status";
-		    	}
-		    }
-	    }
-	    return $query;
 	}
 }
 ?>

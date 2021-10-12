@@ -14,19 +14,27 @@ class TodoController extends BaseController {
 	public $errors = [];
 
 	public function index() {
+		//引数で渡されたtodoのidから該当するtodoを取得
+		$params = [];
 		//ユーザーを取得
-		$user = 'user003';
+		$params['user'] = 'user003';
 		//GETパラメーターから値を取得
-		// if(empty($_GET['title'])) {
-		$title = $_GET['title'];
-		$status = $_GET['status'];
-		if(!$title && $status === "none") {
+		if($_GET['title']) {
+			$params['title'] = $_GET['title'];
+		}
+		if($_GET['status'] !== "none") {
+			$params['status'] = $_GET['status'];
+		}
+		if(!$params['title'] && !$params['status']) {
 			//modelファイルのfindAllメソッドからインデックスに表示する情報を取得
 			$todos = Todo::findAll();
 			return $todos;
 		}
-		//入力した値に該当するtodoを検索
-		$todos = Todo::findByQuery($user, $title, $status);
+		//入力した値からクエリを生成
+		$query = $this->buildQuery($params);
+		//生成したクエリから検索
+		$todos = TODO::findByQuery($query, $params);
+		return $todos;
 		if(!$todos) {
 			session_start();
 			//エラーをセッションに格納
@@ -34,6 +42,21 @@ class TodoController extends BaseController {
 			return $todos;
 		}
 		return $todos;
+	}
+
+	//findByQueryのwhere句を生成
+	private function buildQuery($params) {
+	    $query = "SELECT * FROM todos WHERE user_id = :user";
+
+	    foreach ($params as $key => $param) {
+	    	if ($key === "title") {
+	    		$query = $query . " AND title like :title";
+	    	}
+		    if ($key === "status") {
+		    	$query = $query . " AND status = :status";
+		    }
+	    }
+	    return $query;
 	}
 
 	public function detatil() {

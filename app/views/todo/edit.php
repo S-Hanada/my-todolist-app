@@ -70,16 +70,16 @@ $todo = $todo_controllers->edit();
 		<dt><label>タスク状況</label></dt>
 		<dd>
 			<?php if($_GET['status']) : ?>
-				<?php if($_GET['status'] === '1') : ?>
-					<input type="checkbox" name="status" value="1" checked>
+				<?php if($_GET['status'] === 'done') : ?>
+					<input type="checkbox" name="status" value="done" checked>
 				<?php else : ?>
-					<input type="checkbox" name="status" value="1">
+					<input type="checkbox" name="status" value="done">
 				<?php endif; ?>
 			<?php else : ?>
-				<?php if($todo['status'] === '1') : ?>
-					<input type="checkbox" name="status" value="1" checked>
+				<?php if($todo['status'] === 'done') : ?>
+					<input type="checkbox" name="status" value="done" checked>
 				<?php else : ?>
-					<input type="checkbox" name="status" value="1">
+					<input type="checkbox" name="status" value="done">
 				<?php endif; ?>
 			<?php endif; ?>
 			<span>完了<span>
