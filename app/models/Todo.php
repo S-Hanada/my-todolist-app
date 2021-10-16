@@ -9,11 +9,9 @@ class Todo extends BaseModel {
 	const STATUS_DONE = "1";
 
 	//レコードの取得
-	public static function findAll() {
+	public static function findAll($user) {
 		//DB接続
 		$dbh = self::DbConnect();
-		//ログインユーザーを取得（暫定固定）
-		$user = "user003";
 		//sql文を定義
 		$sql = "SELECT id, title, status FROM todos WHERE user_id = '$user'";
 		$stmt = $dbh->query($sql);

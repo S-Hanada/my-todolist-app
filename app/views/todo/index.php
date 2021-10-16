@@ -1,10 +1,12 @@
 <?php
 //コントローラーファイルを取得
 require_once(__DIR__.'/../../controllers/TodoController.php');
+//コントローラーファイルを取得
+require_once(__DIR__.'/../../controllers/AuthController/AuthController.php');
 //todoControllersクラスをインスタンス
-$todo_controllers = new TodoController();
+$auth_controllers = new AuthController();
 //DB接続
-$tasks = $todo_controllers->index();
+$auth_controllers->login();
 // var_dump($tasks);
 session_start();
 //DB登録のエラーメッセージを取得
@@ -12,8 +14,17 @@ if($_SESSION['NoneTask']) {
 	$none_task = $_SESSION['NoneTask'];
 	unset($_SESSION['NoneTask']);
 }
+if(!$_SESSION['user']) {
+	header('Location: ../auth/login.php');
+	exit();
+}
 session_destroy();
-var_dump($tasks);
+//todoControllersクラスをインスタンス
+$todo_controllers = new TodoController();
+//DB接続
+$tasks = $todo_controllers->index($_SESSION['user']);
+// var_dump($_SESSION['user']);
+// var_dump($tasks);
 ?>
 <!DOCTYPE html>
 <html lang="ja">

@@ -13,11 +13,11 @@ class TodoController extends BaseController {
 
 	public $errors = [];
 
-	public function index() {
+	public function index($user) {
 		//引数で渡されたtodoのidから該当するtodoを取得
 		$params = [];
 		//ユーザーを取得
-		$params['user'] = 'user003';
+		$params['user'] = $user;
 		//GETパラメーターから値を取得
 		if($_GET['title']) {
 			$params['title'] = $_GET['title'];
@@ -27,7 +27,7 @@ class TodoController extends BaseController {
 		}
 		if(!$params['title'] && !$params['status']) {
 			//modelファイルのfindAllメソッドからインデックスに表示する情報を取得
-			$todos = Todo::findAll();
+			$todos = Todo::findAll($user);
 			return $todos;
 		}
 		//入力した値からクエリを生成
@@ -98,7 +98,7 @@ class TodoController extends BaseController {
 	public function store() {
 		//ユーザーを取得
 		$user = 'user003';
-		if(!User::isExisByUserId($user)) {
+		if(!User::findByUserId($user)) {
 			session_start();
 			//エラーをセッションに格納
 			$_SESSION['error'] = "存在しないユーザーIDです";
