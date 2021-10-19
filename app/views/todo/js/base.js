@@ -25,7 +25,7 @@ $(function() {
     // Ajaxリクエストが成功した場
     .done(function(data){
       //jsonオブジェクトの値で条件分岐し、一覧のstatusのラベルを切り替え
-      if(data.status === "1") {
+      if(data.status === "done") {
         $(this).next($("#status")).text("完了");
       } else {
         $(this).next($("#status")).text("未完了");

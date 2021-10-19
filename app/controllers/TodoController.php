@@ -34,11 +34,10 @@ class TodoController extends BaseController {
 		$query = $this->buildQuery($params);
 		//生成したクエリから検索
 		$todos = TODO::findByQuery($query, $params);
-		return $todos;
 		if(!$todos) {
 			session_start();
 			//エラーをセッションに格納
-			$_SESSION['NoneTask'] = "該当するタスクが見つかりませんでした";
+			$_SESSION['errors'] = "該当するタスクが見つかりませんでした";
 			return $todos;
 		}
 		return $todos;

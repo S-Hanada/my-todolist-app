@@ -1,9 +1,8 @@
 <?php
 //userテーブル用のモデルファイルを取得
-require_once(__DIR__.'/../../models/User.php');
+require_once(__DIR__.'/../models/User.php');
 
 class AuthController {
-	//URLがsshかを判定し、ドメインを繋げて出力
 	public function login() {
 		$params = [];
 		if($_POST['user']) {
@@ -15,13 +14,15 @@ class AuthController {
 		$user = User::isExisByUser($params);
 		if(!$user) {
 			session_start();	
-			$_SESSION['NotExisUser'] = "存在しないユーザーです";
-			return false;
+			$_SESSION['errors'] = "存在しないユーザーです";
+			//getパラメーターでフォームに返す
+			header("Location: ../auth/login.php?user_id=".$params['user']);
+			exit();
 		}
 		session_start();
-		$_SESSION['user'] = $user['id'];
-		$_SEESION['password'] =	$user['password'];
-		return true;
+		$_SESSION['user_id'] = $user['id'];
+		header('Location: ../todo/index.php');
+		exit();
 	}
 }
 ?>

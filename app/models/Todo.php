@@ -5,8 +5,8 @@ require_once(__DIR__.'/BaseModel.php');
 class Todo extends BaseModel {
 
 	//statusカラムの値を定数で定義
-	const STATUS_YET = "0";
-	const STATUS_DONE = "1";
+	const STATUS_YET = "yet";
+	const STATUS_DONE = "done";
 
 	//レコードの取得
 	public static function findAll($user) {
@@ -121,7 +121,6 @@ class Todo extends BaseModel {
 		try {
 			//トランザクション開始
 			$dbh->beginTransaction();
-		
 			$sql = "UPDATE todos SET status = :status WHERE id = :id";
 			$stmt = $dbh->prepare($sql);
 			// 更新する値と該当のIDを配列に格納する

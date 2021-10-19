@@ -1,9 +1,17 @@
 <?php
+//login用のコントローラーファイルを取得
+require_once(__DIR__.'/../../controllers/AuthController.php');
+//AuthControllersクラスをインスタンス
+$auth_controllers = new AuthController();
+if($_POST['user']) {
+	//DB接続
+	$auth_controllers->login();
+}
 session_start();
 //DB登録のエラーメッセージを取得
-if($_SESSION['NotExisUser']) {
-	$not_exits = $_SESSION['NotExisUser'];
-	unset($_SESSION['NotExisUser']);
+if($_SESSION['errors']) {
+	$errors = $_SESSION['errors'];
+	$_SESSION = array();
 }
 session_destroy();
 ?>
@@ -17,11 +25,11 @@ session_destroy();
 <body>
 <h1>TODOリスト</h1>
 <h2>ログインする</h2>
-<p><?php echo $not_exits; ?></p>
-<form action="/views/todo/index.php" method="post" id="login">
+<p><?php echo $errors; ?></p>
+<form action="login.php" method="post" id="login">
 	<dl>
 		<dt><label for="user">ID</label></dt>
-		<dd><input type="text" name="user" value="<?php echo $_POST["user"]; ?>"></dd>
+		<dd><input type="text" name="user" value="<?php echo $_GET["user_id"]; ?>"></dd>
 		<dt><label for="password">PASSWORD</label></dt>
 		<dd><input type="password" name="password"></dd>
 	</dl>

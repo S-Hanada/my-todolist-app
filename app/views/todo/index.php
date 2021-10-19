@@ -1,30 +1,19 @@
 <?php
 //コントローラーファイルを取得
 require_once(__DIR__.'/../../controllers/TodoController.php');
-//コントローラーファイルを取得
-require_once(__DIR__.'/../../controllers/AuthController/AuthController.php');
-//todoControllersクラスをインスタンス
-$auth_controllers = new AuthController();
-//DB接続
-$auth_controllers->login();
-// var_dump($tasks);
 session_start();
-//DB登録のエラーメッセージを取得
-if($_SESSION['NoneTask']) {
-	$none_task = $_SESSION['NoneTask'];
-	unset($_SESSION['NoneTask']);
-}
-if(!$_SESSION['user']) {
-	header('Location: ../auth/login.php');
-	exit();
-}
-session_destroy();
 //todoControllersクラスをインスタンス
 $todo_controllers = new TodoController();
 //DB接続
-$tasks = $todo_controllers->index($_SESSION['user']);
-// var_dump($_SESSION['user']);
-// var_dump($tasks);
+$tasks = $todo_controllers->index($_SESSION['user_id']);
+//DB登録のエラーメッセージを取得
+if($_SESSION['errors']) {
+	$errors = $_SESSION['errors'];
+	unset($_SESSION['errors']);
+}
+// var_dump($_SESSION['user_id']);
+// var_dump($user_id);
+var_dump($tasks);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -37,7 +26,7 @@ $tasks = $todo_controllers->index($_SESSION['user']);
 <h1>TODOリスト</h1>
 <h2>タスクを検索する</h2>
 <form action="index.php" method="get" id="search">
-	<input type="text" name="title" value="<?php echo $_GET["title"]; ?>">
+	<input type="text" name="title" value="<?php echo $_GET['title']; ?>">
 	<select name="status" form="search">
 		<option value="none" selected>選択してください</option>
 		<option value="yet">未完了</option>
@@ -47,8 +36,8 @@ $tasks = $todo_controllers->index($_SESSION['user']);
 </form>
 <h2>タスク一覧</h2>
 <div id="resultmsg"></div>
-<?php if($none_task) : ?>
-	<p><?php echo $none_task; ?></p>
+<?php if($errors) : ?>
+	<p><?php echo $errors; ?></p>
 <?php else : ?>
 	<ul>
 	<?php foreach ($tasks as $task) : ?>
