@@ -5,15 +5,13 @@ require_once(__DIR__.'/BaseModel.php');
 class Todo extends BaseModel {
 
 	//statusカラムの値を定数で定義
-	const STATUS_YET = "0";
-	const STATUS_DONE = "1";
+	const STATUS_YET = "yet";
+	const STATUS_DONE = "done";
 
 	//レコードの取得
-	public static function findAll() {
+	public static function findAll($user) {
 		//DB接続
 		$dbh = self::DbConnect();
-		//ログインユーザーを取得（暫定固定）
-		$user = "user003";
 		//sql文を定義
 		$sql = "SELECT id, title, status FROM todos WHERE user_id = '$user'";
 		$stmt = $dbh->query($sql);
@@ -123,7 +121,6 @@ class Todo extends BaseModel {
 		try {
 			//トランザクション開始
 			$dbh->beginTransaction();
-		
 			$sql = "UPDATE todos SET status = :status WHERE id = :id";
 			$stmt = $dbh->prepare($sql);
 			// 更新する値と該当のIDを配列に格納する
@@ -168,5 +165,24 @@ class Todo extends BaseModel {
 		$dbh = null;
 	}
 
+	//該当する記事を取得
+	public static function findByQuery($sql, $bind_values = []) {
+		//DB接続
+		$dbh = self::DbConnect();
+		try {
+			//トランザクション開始
+			$dbh->beginTransaction();
+			$stmt = $dbh->prepare($sql);
+			$stmt->execute($bind_values);
+			// // トランザクション完了
+			$dbh->commit();
+			$todos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			return $todos;
+		} catch (PDOException $e) {
+			//トランザクション取り消し（ロールバック）
+			$dbh->rollBack();
+			return false;
+		}
+	}
 }
 ?>

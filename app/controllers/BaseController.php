@@ -1,16 +1,13 @@
 <?php
 
 class BaseController {
-	
-	//URLがsshかを判定し、ドメインを繋げて出力
-	public function sshJudge() {
-		if (empty($_SERVER['HTTPS'])) {
-			$protocol = "http://";
-		} else {
-			$protocol = "https://";
+
+	function __construct() {
+		if(!$_SESSION['user_id']) {
+			header("Location: ../auth/login.php");
+			exit();
 		}
-		$url = $protocol.$_SERVER['HTTP_HOST'];
-		return $url;
 	}
+	
 }
 ?>

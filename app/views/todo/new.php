@@ -1,10 +1,12 @@
 <?php
 //コントローラーファイルを取得
 require_once(__DIR__.'/../../controllers/TodoController.php');
+//関数ファイルを読み込む
+require_once(__DIR__.'/../../lib/util.php');
+session_start();
 //todoControllersクラスをインスタンス
 $todo_controllers = new TodoController();
 //エラ〜メッセージを取得
-session_start();
 //フォームのエラ〜メッセージを取得
 if($_SESSION['errors']) {
 	$errors = [];
@@ -16,7 +18,6 @@ if($_SESSION['error']) {
 	$dberror = $_SESSION['error'];
 	unset($_SESSION['error']);
 }
-session_destroy();
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -59,6 +60,6 @@ session_destroy();
 	<input type="submit" value="確認">
 </form>
 <div>
-	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/">一覧ページに戻る</a>
+	<a href="<?php echo sshJudge(); ?>/views/todo/">一覧ページに戻る</a>
 </div>
 <?php require_once(__DIR__.'/footer.php'); ?>

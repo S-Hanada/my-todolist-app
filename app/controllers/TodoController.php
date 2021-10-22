@@ -13,10 +13,49 @@ class TodoController extends BaseController {
 
 	public $errors = [];
 
-	public function index() {
-		//modelファイルのfindAllメソッドからインデックスに表示する情報を取得
-		$todos = Todo::findAll();
+	public function index($user) {
+		//引数で渡されたtodoのidから該当するtodoを取得
+		$params = [];
+		//ユーザーを取得
+		$params['user'] = $user;
+		//GETパラメーターから値を取得
+		if($_GET['title']) {
+			$params['title'] = "%{$_GET['title']}%";
+		}
+		if($_GET['status'] !== "none") {
+			$params['status'] = $_GET['status'];
+		}
+		if(!$params['title'] && !$params['status']) {
+			//modelファイルのfindAllメソッドからインデックスに表示する情報を取得
+			$todos = Todo::findAll($user);
+			return $todos;
+		}
+		//入力した値からクエリを生成
+		$query = $this->buildQuery($params);
+		//生成したクエリから検索
+		$todos = TODO::findByQuery($query, $params);
+		if(!$todos) {
+			session_start();
+			//エラーをセッションに格納
+			$_SESSION['errors'] = "該当するタスクが見つかりませんでした";
+			return $todos;
+		}
 		return $todos;
+	}
+
+	//findByQueryのwhere句を生成
+	private function buildQuery($params) {
+	    $query = "SELECT * FROM todos WHERE user_id = :user";
+
+	    foreach ($params as $key => $param) {
+	    	if ($key === "title") {
+	    		$query = $query . " AND title like :title";
+	    	}
+		    if ($key === "status") {
+		    	$query = $query . " AND status = :status";
+		    }
+	    }
+	    return $query;
 	}
 
 	public function detatil() {
@@ -55,10 +94,8 @@ class TodoController extends BaseController {
 		return $todo;
 	}
 
-	public function store() {
-		//ユーザーを取得
-		$user = 'user003';
-		if(!User::isExisByUserId($user)) {
+	public function store($user) {
+		if(!User::findByUserId($user)) {
 			session_start();
 			//エラーをセッションに格納
 			$_SESSION['error'] = "存在しないユーザーIDです";
@@ -114,53 +151,6 @@ class TodoController extends BaseController {
 			header('Location: ../todo/edit.php?todo_id='.$id.'&title='.$title.'&comment='.$comment.'&status='.$status, true, 307);
 			exit();
 		}
-	}
-
-
-	public function statusUpdate($id) {
-		$response = array();
-		$errormsg = "アップデートに失敗しました";
-		//パラメーターのバリデーション
-		$todo_validation = new TodoValidation();
-		if(!$todo_validation->checkId($id)) {
-			$response['result'] = "fail";
-			$response['msg'] = $errormsg;
-			return $response;
-		}
-		//idからDBのstatusの値を取得
-		$status = Todo::findStatus($id);
-		//DBに上書きするステータスを格納
-		if($status === TODO::STATUS_DONE) {
-			$status = TODO::STATUS_YET;
-			$response['status'] = TODO::STATUS_YET;
-		} else {
-			$status = TODO::STATUS_DONE;
-			$response['status'] = TODO::STATUS_DONE;
-		}
-		if(!Todo::statusUpdate($id, $status)) {
-			$response['result'] = "fail";
-			$response['msg'] = $errormsg;
-			return $response;
-		}
-		$response['result'] = "success";
-		return $response;
-	}
-
-	public function delete($id) {
-		$response = array();
-		$errormsg = "削除失敗しました";
-		//パラメーターのバリデーション
-		$todo_validation = new TodoValidation();
-		if(!$todo_validation->checkId($id)) {
-			$response['msg'] = $errormsg;
-			return $response;
-		}
-		if(!Todo::delete($id)) {
-			$response['msg'] = $errormsg;
-			return $response;
-		}
-		$response['msg'] = "タスクの削除が完了しました";
-		return $response;
 	}
 }
 ?>

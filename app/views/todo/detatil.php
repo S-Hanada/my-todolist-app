@@ -1,6 +1,9 @@
 <?php
 //コントローラーファイルを取得
 require_once('../../controllers/TodoController.php');
+//関数ファイルを読み込む
+require_once(__DIR__.'/../../lib/util.php');
+session_start();
 $todo_controllers = new TodoController();
 $todo = $todo_controllers->detatil();
 ?>
@@ -28,6 +31,6 @@ $todo = $todo_controllers->detatil();
 	<a href="<?php echo sprintf('edit.php?todo_id=%d', $_GET['todo_id'])?>">編集する</a>
 </div>
 <div>
-	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/">一覧ページに戻る</a>
+	<a href="<?php echo sshJudge(); ?>/views/todo/">一覧ページに戻る</a>
 </div>
 <?php require(__DIR__.'/footer.php'); ?>
