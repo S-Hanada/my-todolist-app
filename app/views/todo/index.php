@@ -1,6 +1,8 @@
 <?php
 //コントローラーファイルを取得
 require_once(__DIR__.'/../../controllers/TodoController.php');
+//関数ファイルを読み込む
+require_once(__DIR__.'/../../lib/util.php');
 session_start();
 //todoControllersクラスをインスタンス
 $todo_controllers = new TodoController();
@@ -13,7 +15,7 @@ if($_SESSION['errors']) {
 }
 // var_dump($_SESSION['user_id']);
 // var_dump($user_id);
-var_dump($tasks);
+// var_dump($tasks);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -62,6 +64,6 @@ var_dump($tasks);
 	</ul>
 <?php endif; ?>
 <div>
-	<a href="<?php echo $todo_controllers->sshJudge(); ?>/views/todo/new.php">新規作成</a>
+	<a href="<?php echo sshJudge(); ?>/views/todo/new.php">新規作成</a>
 </div>
 <?php require_once(__DIR__.'/footer.php'); ?>

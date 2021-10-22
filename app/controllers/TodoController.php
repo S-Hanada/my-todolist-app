@@ -20,7 +20,7 @@ class TodoController extends BaseController {
 		$params['user'] = $user;
 		//GETパラメーターから値を取得
 		if($_GET['title']) {
-			$params['title'] = $_GET['title'];
+			$params['title'] = "%{$_GET['title']}%";
 		}
 		if($_GET['status'] !== "none") {
 			$params['status'] = $_GET['status'];
@@ -94,9 +94,7 @@ class TodoController extends BaseController {
 		return $todo;
 	}
 
-	public function store() {
-		//ユーザーを取得
-		$user = 'user003';
+	public function store($user) {
 		if(!User::findByUserId($user)) {
 			session_start();
 			//エラーをセッションに格納
