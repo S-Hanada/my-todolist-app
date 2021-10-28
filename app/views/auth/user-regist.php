@@ -5,7 +5,7 @@ require_once(__DIR__.'/../../controllers/AuthController.php');
 $auth_controllers = new AuthController();
 if($_POST['user']) {
 	//DB接続
-	$auth_controllers->login();
+	$auth_controllers->sendMail();
 }
 //DB登録のエラーメッセージを取得
 session_start();
@@ -13,27 +13,25 @@ if($_SESSION['errors']) {
 	$errors = $_SESSION['errors'];
 	$_SESSION = array();
 }
-session_destroy();
+var_dump($errors);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>TODOリスト</title>
+	<title>ユーザー新規登録</title>
 </head>
 <body>
-<h1>TODOリスト</h1>
-<h2>ログインする</h2>
+<h1>ユーザー新規登録</h1>
+<p>登録するメールアドレスを入力してください</p>
 <p><?php echo $errors; ?></p>
-<form action="login.php" method="post" id="login">
+<form action="sendmail.php" method="post" id="sendmail">
 	<dl>
-		<dt><label for="user">ID</label></dt>
-		<dd><input type="text" name="user" value="<?php echo $_GET["user_id"]; ?>"></dd>
-		<dt><label for="password">PASSWORD</label></dt>
-		<dd><input type="password" name="password"></dd>
+		<dt><label for="email">E-MAIL</label></dt>
+		<dd><input type="email" name="email"></dd>
 	</dl>
 	<input type="submit" value="送信">
 </form>
 <br>
-<a href="user-regist.php">サインアップ</a>
+<a href="login.php">ログイン画面に戻る</a>

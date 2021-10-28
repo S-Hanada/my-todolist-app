@@ -38,5 +38,28 @@ class User extends BaseModel {
 		//DB切断
 		$dbh = null;
 	}
+
+	//ユーザーを照合
+	public static function isExisByMaill($email) {
+		//DB接続
+		$dbh = self::DbConnect();
+		try {
+			//トランザクション開始
+			$dbh->beginTransaction();
+			//sql文を定義
+			$sql = "SELECT id FROM users WHERE email = '$email'";
+			$stmt = $dbh->prepare($sql);
+			$stmt->execute();
+			$user = $stmt->fetch(PDO::FETCH_ASSOC);
+			$dbh->commit();
+			return $user;
+		} catch (PDOException $e) {
+			//トランザクション取り消し（ロールバック）
+			$dbh->rollBack();
+			return;
+		}
+		//DB切断
+		$dbh = null;
+	}
 }
 ?>
