@@ -5,7 +5,7 @@ require_once(__DIR__.'/BaseController.php');
 require_once(__DIR__.'/../models/Todo.php');
 //userテーブル用のモデルファイルを取得
 require_once(__DIR__.'/../models/User.php');
-//バリデーションを取得
+//Todoバリデーションを取得
 require_once(__DIR__.'/../validations/TodoValidation.php');
 
 //Todoリストに関するコントロール処理をまとめたクラス
