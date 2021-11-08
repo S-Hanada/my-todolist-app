@@ -3,7 +3,9 @@
 require_once(__DIR__.'/../../controllers/AuthController.php');
 //AuthControllersクラスをインスタンス
 $auth_controllers = new AuthController();
-$mail = $auth_controllers->sendMail();
+if($_POST['email']) {
+	$auth_controllers->sendMail();
+}
 //DB登録のエラーメッセージを取得
 session_start();
 if($_SESSION['success']) {
@@ -16,6 +18,7 @@ if($_SESSION['errors']) {
 }
 // var_dump($mail);
 // var_dump($errors);
+// var_dump($_POST['email']);
 
 ?>
 <!DOCTYPE html>

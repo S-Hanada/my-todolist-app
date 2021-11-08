@@ -7,12 +7,13 @@ class EmailValidation {
 
 	public function check($email, $user) {
 		//アドレスがあるか
-		if(!empty($email)) {
+		if(isset($email)) {
 			//正規表現でアドレスのバリデーション
 			$pattern = "/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/iD";
 			if(!preg_match($pattern, $email)){
-				$errors['PatternTrue'] = "メールアドレではありません"; 
+				$errors['PatternTrue'] = "メールアドレスではありません"; 
 			}
+
 			//usersテーブルに登録されているユーザーかのバリデーション
 			if($user) {
 				$errors['RegistUser'] = "登録済みのメールアドレスです";
@@ -23,6 +24,7 @@ class EmailValidation {
 		}
 		
 		//null以外であればプロパティに格納
+		// var_dump($errors."ある");
 		if(isset($errors)) {
 			$this->errors = $errors;
 			return false;

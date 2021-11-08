@@ -46,9 +46,10 @@ class AuthController {
 			header("Location: ../auth/user-regist.php");
 			exit();
 		}
-		$mail_system = new Mail();
 		//サインアップ用の案内メッセージを配列で取得
-		$mailinfo = $mail_system->buildSignupMailInfo($email);
+		$mailinfo = $this->buildSignupMailInfo($email);
+		//メールシステムのクラスを呼び出し
+		$mail_system = new Mail();
 		if(!$mail_system->send($mailinfo)) {
 			session_start();
 			$_SESSION['errors'] = "メールの送信に失敗しました";
@@ -62,6 +63,25 @@ class AuthController {
 		$_SESSION['success'] = "メールをお送りしました。10分以内にメールに記載されたURLからご登録下さい。";     ;
 		header("Location: ../auth/sendmail.php");
 		exit();
+	}
+
+	//ユーザー仮登録用のメッセージ作成
+	private function buildSignupMailInfo($email) {
+		//urlに使用するトークンを発行
+		$mail = [];
+		$mail['email'] = $email;
+		$urltoken = hash('sha256',uniqid(rand(),1));
+		$url = "http://localhost:8000/views/auth/signup.php?urltoken=".$urltoken;
+		$mail['urltoken'] = $urltoken;
+		$mail['url'] = $url;
+		$mail['title'] = "Todoリスト ユーザー登録確認用メール";
+		$message = "下記URLにアクセスし、本登録を行ってください".PHP_EOL.PHP_EOL;
+		$message .= $url.PHP_EOL;
+		$mail['message'] = $message;
+		$headers = "From: from@example.com";
+		// $headers = "From: http://localhost:8000/";
+		$mail['headers'] = $headers;
+		return $mail;
 	}
 
 	//発行されたURLとトークンを照合
@@ -139,9 +159,10 @@ class AuthController {
 			header("Location: ../auth/signup.php?urltoken=".$urltoken);
 			exit();
 		}
-		$mail_system = new Mail();
 		//ユーザー登録完了のメールフォーマットを作成
-		$mailinfo = $mail_system->buildSignupDoneMailInfo($params['email']);
+		$mailinfo = $this->buildSignupDoneMailInfo($params['email']);
+		//メールシステムのクラスを呼び出し
+		$mail_system = new Mail();
 		if(!$mail_system->send($mailinfo)) {
 			session_start();
 			$_SESSION['errors'] = "ユーザー登録中にエラーが起こりました";
@@ -152,6 +173,22 @@ class AuthController {
 		$_SESSION['success'] = "ユーザー本登録完了";     ;
 		//登録に成功した場合、仮登録したデータのflagをアップデートし参照対象から無効化
 		User::updatePreUserFlag($params['email']);
+	}
+
+	//ユーザー登録完了のメッセージ作成
+	private function buildSignupDoneMailInfo($email) {
+		//urlに使用するトークンを発行
+		$mail = [];
+		$mail['email'] = $email;
+		$mail['title'] = "ユーザー登録が完了しました。";
+		$url = "http://localhost:8000/views/auth/login.php";
+		$message = "ユーザー登録が完了しました。下記URLからTodoリストページにログインを行なってください".PHP_EOL.PHP_EOL;
+		$message .= $url.PHP_EOL;
+		$mail['message'] = $message;
+		$headers = "From: signup@example.com";
+		// $headers = "From: http://localhost:8000/";
+		$mail['headers'] = $headers;
+		return $mail;
 	}
 }
 ?>
