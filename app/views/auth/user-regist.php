@@ -9,7 +9,6 @@ if($_SESSION['errors']) {
 	$errors = $_SESSION['errors'];
 	$_SESSION = array();
 }
-var_dump($errors);
 ?>
 <!DOCTYPE html>
 <html lang="ja">

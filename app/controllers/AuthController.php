@@ -5,10 +5,20 @@ require_once(__DIR__.'/../models/User.php');
 require_once(__DIR__.'/../validations/EmailValidation.php');
 //サインアップ確認用バリデーションを取得
 require_once(__DIR__.'/../validations/SignupValidation.php');
+//サインアップ確認用バリデーションを取得
+require_once(__DIR__.'/../validations/LoginValidation.php');
 //メール送信機能クラスを取得
 require_once(__DIR__.'/../lib/mail.php');
 
 class AuthController {
+
+	//ログインがロックされるまでのリミット
+	const LOGIN_FAILED_LIMIT = 3;
+
+	function __construct() {
+        date_default_timezone_set('Asia/Tokyo');
+    }
+
 	public function login() {
 		$params = [];
 		if($_POST['user']) {
@@ -17,18 +27,58 @@ class AuthController {
 		if($_POST['password']) {
 			$params['password'] = $_POST['password'];
 		}
-		$user = User::isExisByUser($params);
-		if(!$user) {
+		$login_validation = new LoginValidation();
+		//入力情報のバリデーション
+		if(!$login_validation->check($params)) {
 			session_start();	
-			$_SESSION['errors'] = "存在しないユーザーです";
+			$_SESSION['errors'] = $login_validation->getErrorMessage();
 			//getパラメーターでフォームに返す
 			header("Location: ../auth/login.php?user_id=".$params['user']);
 			exit();
+		}
+		//入力した情報からユーザーを取得
+		$user = User::isExisByUser($params);
+		//ユーザー情報の有無のバリデーション
+		if(!$login_validation->checkUser($user)) {
+			session_start();
+			$_SESSION['errors'] = $login_validation->getErrorMessage();
+			$this->lock($params['user']);
+			//getパラメーターでフォームに返す
+			header("Location: ../auth/login.php?user_id=".$params['user']);
+			exit();
+		}
+		//ログイン
+		//ロックフラグが有効なもの
+		if($user['flag'] === "1") {
+			//残りロック時間を取得
+			$locktime_diff = strtotime('now') - strtotime($user['locked_time']);
+			if(!$login_validation->checkLockTime($locktime_diff)) {
+				session_start();
+	        	$_SESSION['errors'] = $login_validation->getErrorMessage();
+				//getパラメーターでフォームに返す
+				header("Location: ../auth/login.php?user_id=".$params['user']);
+				exit();
+			} else {
+				// アカウントロック期間終了だったらロック解除
+				User::unlockLoginAccount($params['user']);
+			}
 		}
 		session_start();
 		$_SESSION['user_id'] = $user['id'];
 		header('Location: ../todo/index.php');
 		exit();
+	}
+
+	//アカウントロック機能
+	private function lock($id) {
+		//カウントアップ
+		User::loginFailedCountUp($id);
+		//カウントを取得
+		$count = User::getLoginFailedCount($id);
+		//DB上に保存されている該当のIDが、失敗の上限を越えたらロック
+		if($count >= self::LOGIN_FAILED_LIMIT) {
+			User::lockLoginAccount($id);
+		}
 	}
 
 	public function sendMail() {
@@ -37,7 +87,7 @@ class AuthController {
 			$email = $_POST['email'];
 		}
 		//ユーザーが登録済みか
-		$user = User::isExisByMaill($email);
+		$user = User::isExisByMail($email);
 		//新規登録内容のバリデーション
 		$email_validation = new EmailValidation();
 		if(!$email_validation->check($email, $user)) {

@@ -24,7 +24,7 @@ class User extends BaseModel {
 			//トランザクション開始
 			$dbh->beginTransaction();
 			//sql文を定義
-			$sql = "SELECT id FROM users WHERE id = :user AND password = :password";
+			$sql = "SELECT * FROM users WHERE id = :user AND password = :password";
 			$stmt = $dbh->prepare($sql);
 			$stmt->execute($bind_values);
 			$user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -40,7 +40,7 @@ class User extends BaseModel {
 	}
 
 	//ユーザーを照合
-	public static function isExisByMaill($email) {
+	public static function isExisByMail($email) {
 		//DB接続
 		$dbh = self::DbConnect();
 		try {
@@ -155,5 +155,107 @@ class User extends BaseModel {
 		$dbh = null;
 	}
 
+	public static function getLoginFailedCount($id) {
+		//DB接続
+		$dbh = self::DbConnect();
+		try {
+			// トランザクションの開始
+			$dbh->beginTransaction();
+			$sql = "SELECT failed_count FROM users WHERE id = :id";
+			$stmt = $dbh->prepare($sql);
+			// 更新する値と該当のIDを配列に格納する
+			$params = array(
+				':id' => $id
+			);
+			$stmt->execute($params);
+			$count = $stmt->fetch(PDO::FETCH_ASSOC);
+			// コミット
+			$dbh->commit();
+			if (!empty($count)) {
+				return $count['failed_count'];
+			}
+		} catch (PDOException $e) {
+			// ロールバック
+			$dbh->rollBack();
+			return false;
+		}
+		//DB切断
+		$dbh = null;
+	}
+
+	//ログイン失敗のカウントアップをする
+	public static function loginFailedCountUp($id) {
+		//DB接続
+		$dbh = self::DbConnect();
+		try {
+			// トランザクションの開始
+			$dbh->beginTransaction();
+			$sql = "UPDATE users SET failed_count = failed_count + 1 WHERE id = :id AND flag = 0";
+			$stmt = $dbh->prepare($sql);
+			// 更新する値と該当のIDを配列に格納する
+			$params = array(
+				':id' => $id
+			);
+			$stmt->execute($params);
+			// コミット
+			return $dbh->commit();
+		} catch (PDOException $e) {
+			// ロールバック
+			$dbh->rollBack();
+			return false;
+		}
+		//DB切断
+		$dbh = null;
+	}
+
+	//アカウントのロック
+	public static function lockLoginAccount($id) {
+		//DB接続
+		$dbh = self::DbConnect();
+		try {
+			// トランザクションの開始
+			$dbh->beginTransaction();
+			$sql = "UPDATE users SET flag = 1, locked_time = now() WHERE id = :id AND flag = 0";
+			$stmt = $dbh->prepare($sql);
+			// 更新する値と該当のIDを配列に格納する
+			$params = array(
+				':id' => $id
+			);
+			$stmt->execute($params);
+			// コミット
+			return $dbh->commit();
+		} catch (PDOException $e) {
+			// ロールバック
+			$dbh->rollBack();
+			return false;
+		}
+		//DB切断
+		$dbh = null;
+	}
+
+	//アカウントのアンロック
+	public static function unlockLoginAccount($id) {
+		//DB接続
+		$dbh = self::DbConnect();
+		try {
+			// トランザクションの開始
+			$dbh->beginTransaction();
+			$sql = "UPDATE users SET failed_count = 0, locked_time = NULL, flag = 0 WHERE id = :id AND flag = 1";
+			$stmt = $dbh->prepare($sql);
+			// 更新する値と該当のIDを配列に格納する
+			$params = array(
+				':id' => $id
+			);
+			$stmt->execute($params);
+			// コミット
+			return $dbh->commit();
+		} catch (PDOException $e) {
+			// ロールバック
+			$dbh->rollBack();
+			return false;
+		}
+		//DB切断
+		$dbh = null;
+	}
 }
 ?>

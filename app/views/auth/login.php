@@ -3,9 +3,9 @@
 require_once(__DIR__.'/../../controllers/AuthController.php');
 //AuthControllersクラスをインスタンス
 $auth_controllers = new AuthController();
-if($_POST['user']) {
+if($_POST) {
 	//DB接続
-	$auth_controllers->login();
+	$user = $auth_controllers->login();
 }
 //DB登録のエラーメッセージを取得
 session_start();
@@ -25,7 +25,12 @@ session_destroy();
 <body>
 <h1>TODOリスト</h1>
 <h2>ログインする</h2>
-<p><?php echo $errors; ?></p>
+<p>
+<?php if(isset($errors)) : ?>
+	<?php foreach($errors as $error) : ?>
+		<p><?php echo $error; ?></p>
+	<?php endforeach; ?>
+<?php endif; ?></p>
 <form action="login.php" method="post" id="login">
 	<dl>
 		<dt><label for="user">ID</label></dt>

@@ -30,7 +30,7 @@ class SignupValidation {
 				if(mb_strlen($password1) > 8) {
 					$errors['CharacterLimitPassword'] = "パスワードが長すぎます";
 				}
-
+				
 				if(!preg_match('/^[a-zA-Z0-9]+$/', $password1)) {
 					$errors['NotAlphanumer'] = "パスワードは英数字で入力してください"; 
 				}
