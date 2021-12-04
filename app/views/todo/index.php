@@ -13,9 +13,6 @@ if($_SESSION['errors']) {
 	$errors = $_SESSION['errors'];
 	unset($_SESSION['errors']);
 }
-// var_dump($_SESSION['user_id']);
-// var_dump($user_id);
-// var_dump($tasks);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -63,6 +60,12 @@ if($_SESSION['errors']) {
 	<?php endforeach; ?>
 	</ul>
 <?php endif; ?>
+<div>
+	<a href="csv.php">
+		<button lass="csvoutputbtn" value="<?php echo $task['id']; ?>">CSVで出力</button>
+	</a>
+</div>
+<br>
 <div>
 	<a href="<?php echo sshJudge(); ?>/views/todo/new.php">新規作成</a>
 </div>
