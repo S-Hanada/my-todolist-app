@@ -257,5 +257,32 @@ class User extends BaseModel {
 		//DB切断
 		$dbh = null;
 	}
+
+	//CSVデータを取得
+	public static function selectCsvData($user) {
+		//DB接続
+		$dbh = self::DbConnect();
+		try {
+			//トランザクション開始
+			$dbh->beginTransaction();
+			//sql文を定義
+			$sql = "SELECT id, title, comment, status, created_at FROM todos WHERE user_id = :user";
+			$stmt = $dbh->prepare($sql);
+			// 更新する値と該当のIDを配列に格納する
+			$params = array(
+				':user' => $user
+			);
+			$stmt->execute($params);
+			$user = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$dbh->commit();
+			return $user;
+		} catch (PDOException $e) {
+			//トランザクション取り消し（ロールバック）
+			$dbh->rollBack();
+			return;
+		}
+		//DB切断
+		$dbh = null;
+	}
 }
 ?>

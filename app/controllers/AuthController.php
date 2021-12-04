@@ -32,27 +32,21 @@ class AuthController {
 		if(!$login_validation->check($params)) {
 			session_start();	
 			$_SESSION['errors'] = $login_validation->getErrorMessage();
-			//getパラメーターでフォームに返す
-			header("Location: ../auth/login.php?user_id=".$params['user']);
-			exit();
-		}
-		//入力した情報からユーザーを取得
-		$user = User::isExisByUser($params);
-		//ユーザー情報の有無のバリデーション
-		if(!$login_validation->checkUser($user)) {
-			session_start();
-			$_SESSION['errors'] = $login_validation->getErrorMessage();
-			$this->lock($params['user']);
+			//該当IDがあればロックカウント
+			if($params['user']) {
+				$this->lock($params['user']);
+			}
 			//getパラメーターでフォームに返す
 			header("Location: ../auth/login.php?user_id=".$params['user']);
 			exit();
 		}
 		//ログイン
+		//入力した情報からユーザーを取得
+		$user = User::isExisByUser($params);
 		//ロックフラグが有効なもの
 		if($user['flag'] === "1") {
-			//残りロック時間を取得
-			$locktime_diff = strtotime('now') - strtotime($user['locked_time']);
-			if(!$login_validation->checkLockTime($locktime_diff)) {
+			//ロック状態かをチェック
+			if(!$login_validation->checkLockTime($user['locked_time'])) {
 				session_start();
 	        	$_SESSION['errors'] = $login_validation->getErrorMessage();
 				//getパラメーターでフォームに返す

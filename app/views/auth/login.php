@@ -14,6 +14,7 @@ if($_SESSION['errors']) {
 	$_SESSION = array();
 }
 session_destroy();
+var_dump($user);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
