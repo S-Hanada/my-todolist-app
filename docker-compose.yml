@@ -27,5 +27,12 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    volumes:
+     - ./mail/mhsendmail:/usr/local/bin/mhsendmail
 volumes:
   mysql-data:

@@ -5,13 +5,20 @@ require_once(__DIR__.'/BaseController.php');
 require_once(__DIR__.'/../models/Todo.php');
 //userテーブル用のモデルファイルを取得
 require_once(__DIR__.'/../models/User.php');
-//バリデーションを取得
+//Todoバリデーションを取得
 require_once(__DIR__.'/../validations/TodoValidation.php');
 
 //Todoリストに関するコントロール処理をまとめたクラス
 class TodoController extends BaseController {
 
 	public $errors = [];
+
+	function __construct() {
+        if(empty($_SESSION['user_id'])) {
+			header("Location: ../auth/login.php");
+			exit();
+		}
+    }
 
 	public function index($user) {
 		//引数で渡されたtodoのidから該当するtodoを取得
@@ -152,5 +159,6 @@ class TodoController extends BaseController {
 			exit();
 		}
 	}
+
 }
 ?>

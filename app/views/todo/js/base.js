@@ -68,3 +68,51 @@ $(function() {
     });
   });
 });
+
+// ajax create csv
+$(function() {
+  $(".csvoutputbtn").click(function(){
+    //contextでthisを指定する事で、コールバック部分でもthisの値を使用できるように
+    $.ajax({
+      type: "POST",
+      url: "api/csv.php",
+      data: { val: $(this).val() },
+      dataType : "json",
+      context : this
+    })
+    // Ajaxリクエストが成功した場
+    .done(function(data){
+      if(data.filename) {
+        $("#resultmsg").text(data.filename);
+      }
+    })
+    // Ajaxリクエストが失敗した場合
+    .fail(function(XMLHttpRequest, textStatus, errorThrown){
+      $("#resultmsg").text("CSVの作成に失敗しました");
+    });
+  });
+});
+
+// ajax csvdownload
+$(function() {
+  $(".csvdownload").click(function(){
+    //contextでthisを指定する事で、コールバック部分でもthisの値を使用できるように
+    $.ajax({
+      type: "POST",
+      url: "api/csvdownload.php",
+      data: { val: $(this).val() },
+      dataType : "json",
+      context : this
+    })
+    // Ajaxリクエストが成功した場
+    .done(function(data){
+      if(data.filename) {
+        $("#resultmsg").text(data.filename);
+      }
+    })
+    // Ajaxリクエストが失敗した場合
+    .fail(function(XMLHttpRequest, textStatus, errorThrown){
+      $("#resultmsg").text("CSVの作成に失敗しました");
+    });
+  });
+});

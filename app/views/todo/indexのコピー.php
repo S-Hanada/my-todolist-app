@@ -65,10 +65,6 @@ if($_SESSION['errors']) {
 </div>
 <br>
 <div>
-	<button class="csvdownload" value="<?php echo $_SESSION['user_id']; ?>">CSVをダウンロード</button>
-</div>
-<br>
-<div>
 	<a href="<?php echo sshJudge(); ?>/views/todo/new.php">新規作成</a>
 </div>
 <?php require_once(__DIR__.'/footer.php'); ?>
